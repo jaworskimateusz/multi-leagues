@@ -15,11 +15,15 @@ USE `moje_ligi` ;
 --
 
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`users` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
   `password` char(68) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
   `role` varchar(45) NOT NULL,
-  PRIMARY KEY (`username`)
+  `imie` VARCHAR(45) NOT NULL,
+  `nazwisko` VARCHAR(45) NOT NULL,
+  `pesel` VARCHAR(11) NOT NULL,
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB;
 
 --
@@ -27,23 +31,15 @@ CREATE TABLE IF NOT EXISTS `moje_ligi`.`users` (
 --
 
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`authorities` (
-  `username` varchar(50) NOT NULL,
+  `user_id` INT NOT NULL,
   `authority` varchar(50) NOT NULL,
-  UNIQUE KEY `authorities_idx_1` (`username`,`authority`),
-  CONSTRAINT `authorities_ibfk_1` FOREIGN KEY (`username`) REFERENCES `moje_ligi`.`users` (`username`)
+  UNIQUE KEY `authorities_idx_1` (`user_id`,`authority`),
+  CONSTRAINT `authorities_ibfk_1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `moje_ligi`.`users` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
 ) ENGINE=InnoDB;
-
--- -----------------------------------------------------
--- Table `moje_ligi`.`zawodnicy`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moje_ligi`.`zawodnicy` (
-  `id_zawodnika` INT NOT NULL AUTO_INCREMENT,
-  `imie` VARCHAR(45) NOT NULL,
-  `nazwisko` VARCHAR(45) NOT NULL,
-  `pesel` VARCHAR(11) NOT NULL,
-  PRIMARY KEY (`id_zawodnika`))
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `moje_ligi`.`wpisowe`
@@ -53,29 +49,27 @@ CREATE TABLE IF NOT EXISTS `moje_ligi`.`wpisowe` (
   `typ` TINYINT NOT NULL,
   `data_uiszczenia` DATETIME NOT NULL,
   `zaplacono` TINYINT NOT NULL,
-  `id_zawodnnika` INT NULL,
+  `user_id` INT NULL,
   PRIMARY KEY (`id_wpisowe`),
-  INDEX `fk_wpisowe_zawodnicy1_idx` (`id_zawodnnika` ASC) VISIBLE,
+  INDEX `fk_wpisowe_zawodnicy1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_wpisowe_zawodnicy1`
-    FOREIGN KEY (`id_zawodnnika`)
-    REFERENCES `moje_ligi`.`zawodnicy` (`id_zawodnika`)
+    FOREIGN KEY (`user_id`)
+    REFERENCES `moje_ligi`.`users` (`user_id`)
     ON DELETE SET NULL
     ON UPDATE SET NULL)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `moje_ligi`.`obiekty`
+-- Table `moje_ligi`.`turnieje`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moje_ligi`.`obiekty` (
-  `id_obiektu` INT NOT NULL AUTO_INCREMENT,
-  `koszt` DECIMAL NOT NULL,
-  `liczba_godzin` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `moje_ligi`.`turnieje` (
+  `id_turnieju` INT NOT NULL AUTO_INCREMENT,
+  `liczba_meczy` INT NOT NULL,
   `nazwa` VARCHAR(45) NOT NULL,
-  `potwierdzono` TINYINT NOT NULL,
-  PRIMARY KEY (`id_obiektu`))
+  `lokalizacja` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_turnieju`))
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `moje_ligi`.`dyscyplina`
@@ -83,8 +77,6 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`dyscyplina` (
   `id_dyscypliny` INT NOT NULL AUTO_INCREMENT,
   `typ` VARCHAR(45) NOT NULL,
-  `liczba_rozgrywek` INT NOT NULL,
-  `wysokosc_wpisowego` DECIMAL NOT NULL,
   PRIMARY KEY (`id_dyscypliny`))
 ENGINE = InnoDB;
 
@@ -149,7 +141,6 @@ CREATE TABLE IF NOT EXISTS `moje_ligi`.`kolejki` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `moje_ligi`.`mecze`
 -- -----------------------------------------------------
@@ -161,12 +152,19 @@ CREATE TABLE IF NOT EXISTS `moje_ligi`.`mecze` (
   `wynik_drugiego` INT NULL,
   `id_pierwszego_zawodnika` INT NULL,
   `id_drugiego_zawodnika` INT NULL,
-  `id_kolejki` INT NOT NULL,
+  `id_kolejki` INT DEFAULT NULL,
+  `id_turnieju` INT DEFAULT NULL,
   PRIMARY KEY (`id_meczu`),
   INDEX `fk_mecze_kolejki1_idx` (`id_kolejki` ASC) VISIBLE,
+  INDEX `fk_mecze_turniejei1_idx` (`id_turnieju` ASC) VISIBLE,
   CONSTRAINT `fk_mecze_kolejki1`
     FOREIGN KEY (`id_kolejki`)
     REFERENCES `moje_ligi`.`kolejki` (`id_kolejki`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_mecze_turnieje1`
+    FOREIGN KEY (`id_turnieju`)
+    REFERENCES `moje_ligi`.`turnieje` (`id_turnieju`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -212,41 +210,18 @@ CREATE TABLE IF NOT EXISTS `moje_ligi`.`wpisowe_kolejki` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `moje_ligi`.`wpisowe_ligi`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moje_ligi`.`wpisowe_ligi` (
-  `id_wpisowe` INT NOT NULL,
-  `id_ligi` INT NOT NULL,
-  PRIMARY KEY (`id_wpisowe`, `id_ligi`),
-  INDEX `fk_wpisowe_has_ligi_ligi1_idx` (`id_ligi` ASC) VISIBLE,
-  INDEX `fk_wpisowe_has_ligi_wpisowe1_idx` (`id_wpisowe` ASC) VISIBLE,
-  CONSTRAINT `fk_wpisowe_has_ligi_wpisowe1`
-    FOREIGN KEY (`id_wpisowe`)
-    REFERENCES `moje_ligi`.`wpisowe` (`id_wpisowe`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_wpisowe_has_ligi_ligi1`
-    FOREIGN KEY (`id_ligi`)
-    REFERENCES `moje_ligi`.`ligi` (`id_ligi`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `moje_ligi`.`zawodnicy_ligi`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`zawodnicy_ligi` (
-  `id_zawodnika` INT NOT NULL,
+  `user_id` INT NOT NULL,
   `id_ligi` INT NOT NULL,
-  PRIMARY KEY (`id_zawodnika`, `id_ligi`),
+  PRIMARY KEY (`user_id`, `id_ligi`),
   INDEX `fk_zawodnicy_has_ligi_ligi1_idx` (`id_ligi` ASC) VISIBLE,
-  INDEX `fk_zawodnicy_has_ligi_zawodnicy1_idx` (`id_zawodnika` ASC) VISIBLE,
+  INDEX `fk_zawodnicy_has_ligi_zawodnicy1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_zawodnicy_has_ligi_zawodnicy1`
-    FOREIGN KEY (`id_zawodnika`)
-    REFERENCES `moje_ligi`.`zawodnicy` (`id_zawodnika`)
+    FOREIGN KEY (`user_id`)
+    REFERENCES `moje_ligi`.`users` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_zawodnicy_has_ligi_ligi1`
@@ -256,27 +231,12 @@ CREATE TABLE IF NOT EXISTS `moje_ligi`.`zawodnicy_ligi` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `moje_ligi`.`sezony_wpisowe`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moje_ligi`.`sezony_wpisowe` (
-  `id_sezonu` INT NOT NULL,
-  `id_wpisowe` INT NOT NULL,
-  PRIMARY KEY (`id_sezonu`, `id_wpisowe`),
-  INDEX `fk_sezony_has_wpisowe_wpisowe1_idx` (`id_wpisowe` ASC) VISIBLE,
-  INDEX `fk_sezony_has_wpisowe_sezony1_idx` (`id_sezonu` ASC) VISIBLE,
-  CONSTRAINT `fk_sezony_has_wpisowe_sezony1`
-    FOREIGN KEY (`id_sezonu`)
-    REFERENCES `moje_ligi`.`sezony` (`id_sezonu`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sezony_has_wpisowe_wpisowe1`
-    FOREIGN KEY (`id_wpisowe`)
-    REFERENCES `moje_ligi`.`wpisowe` (`id_wpisowe`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+INSERT INTO `moje_ligi`.`users`
+VALUES
+(1,'mati','$2a$10$Gf6ln1gEsljuFOEkGi2/6eFhYmueU5Wp42JCulP8sZv/i4uJv1OUS',1, 'WORKER', 'Mateusz', 'Jaw',98040512421),
+(2,'marta','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'ACCOUNTANT','Maria', 'Em',99040512421),
+(3,'jakub','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'WORKER','Kuba', 'S',95040512421),
+(4,'dario','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'PLAYER','Dario', 'Pietrek',98040512421);
 
 --
 -- Dumping data for table `authorities`
@@ -284,33 +244,20 @@ ENGINE = InnoDB;
 
 INSERT INTO `moje_ligi`.`authorities`
 VALUES
-('mati','ROLE_WORKER'),
-('marta','ROLE_ACCOUNTANT'),
-('jakub','ROLE_WORKER');
+(1,'ROLE_WORKER'),
+(2,'ROLE_ACCOUNTANT'),
+(3,'ROLE_WORKER'),
+(4,'ROLE_PLAYER');
 
 
-INSERT INTO `moje_ligi`.`users`
-VALUES
-('mati','$2a$10$Gf6ln1gEsljuFOEkGi2/6eFhYmueU5Wp42JCulP8sZv/i4uJv1OUS',1, 'WORKER'),
-('marta','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'ACCOUNTANT'),
-('jakub','$2a$10$NES12gxIslhWmsn9ZYWFxObjdPTL8H0OKnANQDrHhSJlL0lZgTXPq',1, 'WORKER');
-
-INSERT INTO `moje_ligi`.`dyscyplina` (`typ`,`liczba_rozgrywek`,`wysokosc_wpisowego`)
-VALUES ('Boks', 25, 150);
-
-INSERT INTO `moje_ligi`.`zawodnicy`
-(`imie`,`nazwisko`,`pesel`)
-VALUES('Mateusz', 'Kruszyna', 98040512321);
-
-INSERT INTO `moje_ligi`.`obiekty`
-(`koszt`,`liczba_godzin`,`nazwa`,`potwierdzono`)
-VALUES (1000, 30, 'Ergo Arena',0);
+INSERT INTO `moje_ligi`.`dyscyplina` (`typ`)
+VALUES ('Boks'),('Tenis ziemny'),('Tenis stołowy'),('Dwa ognie');
 
 INSERT INTO `moje_ligi`.`ligi`
 (`poziom`,`opis`,`id_obiektu`, `id_dyscypliny`) VALUES('WYS','Liga tenisa stołowego', null, 1);
 
 INSERT INTO `moje_ligi`.`wpisowe`
-(`typ`,`data_uiszczenia`,`zaplacono`,`id_zawodnnika`)
+(`typ`,`data_uiszczenia`,`zaplacono`,`user_id`)
 VALUES
 (1,STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),1,1);
 
@@ -321,16 +268,12 @@ INSERT INTO `moje_ligi`.`kolejki`
 (`dyscyplina`,`numer`,`id_sezonu`) VALUES ('Boks', '1', 3);
 
 INSERT INTO `moje_ligi`.`mecze` (`termin`,`miejsce`,`wynik_pierwszego`,`wynik_drugiego`,`id_kolejki`)
-VALUES (STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),'Warszawianka',14,10,7);
-
-VALUES (STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),'Arena',null,null,7);
+VALUES (STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),'Warszawianka',14,10,7),
+(STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),'Arena',null,null,7);
 
 INSERT INTO `moje_ligi`.`mecze`
 (`termin`,`miejsce`,`wynik_pierwszego`,`wynik_drugiego`,`id_pierwszego_zawodnika`,`id_drugiego_zawodnika`,`id_kolejki`)
 VALUES(STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),'Warszawianka',null,null,null, null,13);
-
-INSERT INTO `moje_ligi`.`dyscyplina` (`typ`,`liczba_rozgrywek`,`wysokosc_wpisowego`)
-VALUES ('Boks', 25, 150);
 
 
 
