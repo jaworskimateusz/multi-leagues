@@ -8,9 +8,8 @@ import java.util.Date;
 public class Game {
 
     private int gameId;
-
-    @Min(0)
     private int roundId;
+    private int tournamentId;
     private int firstPlayerScore;
     private int secondPlayerScore;
     private int firstPlayerId;
@@ -38,6 +37,14 @@ public class Game {
         this.secondPlayerId = secondPlayerId;
         this.gameDate = gameDate;
         this.place = place;
+    }
+
+    public int getTournamentId() {
+        return tournamentId;
+    }
+
+    public void setTournamentId(int tournamentId) {
+        this.tournamentId = tournamentId;
     }
 
     public Boolean getWithoutPlayers() {

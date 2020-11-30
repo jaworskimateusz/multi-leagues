@@ -30,9 +30,6 @@
 			<li class="nav-item ml-12" sec:authorize="hasAnyRole('ROLE_ACCOUNTANT', 'ROLE_WORKER')">
 				<a class="nav-link" th:href="@{/players/list}">Zawodnicy</a>
 			</li>
-			<li class="nav-item" sec:authorize="hasRole('ROLE_ACCOUNTANT')">
-				<a class="nav-link" th:href="@{/places/list}">Obiekty</a>
-			</li>
 			<li class="nav-item" sec:authorize="hasRole('ROLE_WORKER')">
 				<a class="nav-link" th:href="@{/games/list}">Mecze</a>
 			</li>
@@ -53,6 +50,7 @@
 					[
 					<span sec:authorize="hasRole('ROLE_ACCOUNTANT')" class="white-text">księgowość </span>
 					<span sec:authorize="hasRole('ROLE_WORKER')" class="white-text">pracownik</span>
+					<span sec:authorize="hasRole('ROLE_PLAYER')" class="white-text">zawodnik</span>
 					]
 				</a>
 			</li>
@@ -71,11 +69,11 @@
 				<h3 class="mt-5 pt-4">Lista zawodników</h3>
 				<hr>
 				<form th:action="@{/players/search}" class="form-inline mb-3">
-					<a th:if="${whichOne == null}"  th:href="@{/players/add}" sec:authorize="hasRole('ROLE_WORKER')"
+					<a th:if="${whichOne == null}"  th:href="@{/players/add}" sec:authorize="hasRole('ROLE_ADMIN')"
 					   class="btn btn-outline-dark mr-5">
 						Dodaj Zawodnika
 					</a>
-					<input type="hidden" name="playerId" th:value="${playerId != null} ? ${playerId} : '-1'">
+					<input type="hidden" name="userId" th:value="${userId != null} ? ${userId} : '-1'">
 					<input type="hidden" name="whichOne" th:value="${whichOne != null} ? ${whichOne} : null">
 					<input type="hidden" name="gameId" th:value="${gameId != null} ? ${gameId} : '-1'">
 					<input class="form-control ml-5 mr-sm-2 nav navbar-nav navbar-right pl-2 col row justify-content-end"
@@ -93,17 +91,21 @@
 						<tr>
 							<th>Imie</th>
 							<th>Nazwisko</th>
-							<th>Pesel</th>
-							<th>Akcja</th>
-							<th th:if="${whichOne == null}">Zarządzanie wpłatą</th>
+							<th sec:authorize="hasAnyRole('ROLE_WORKER')">Pesel</th>
+							<th sec:authorize="hasAnyRole('ROLE_WORKER')">Nazwa użytkownika</th>
+							<th sec:authorize="hasAnyRole('ROLE_WORKER')">Numer telefonu</th>
+							<th sec:authorize="hasAnyRole('ROLE_WORKER')">Akcja</th>
+							<th sec:authorize="hasAnyRole('ROLE_WORKER')" th:if="${whichOne == null}">Zarządzanie wpłatą</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="player : ${players}">
 							<td th:text="${player.name}" />
 							<td th:text="${player.surname}" />
-							<td th:text="${player.pesel}" />
-							<td class="form-inline">
+							<td sec:authorize="hasAnyRole('ROLE_WORKER')" th:text="${player.pesel}" />
+							<td sec:authorize="hasAnyRole('ROLE_WORKER')" th:text="${player.username}" />
+							<td sec:authorize="hasAnyRole('ROLE_WORKER')" th:text="${player.phoneNumber}" />
+							<td sec:authorize="hasAnyRole('ROLE_WORKER')" class="form-inline">
 								<div th:if="${whichOne == null}"  sec:authorize="hasAnyRole('ROLE_WORKER')">
 									<a th:href="@{/players/update(playerId=${player.playerId})}"
 									   class="btn btn-outline-secondary btn-sm">
@@ -134,14 +136,14 @@
 									</a>
 								</div>
 							</td>
-							<td th:if="${whichOne == null}">
+							<td sec:authorize="hasAnyRole('ROLE_WORKER')" th:if="${whichOne == null}">
 								<div sec:authorize="hasAnyRole('ROLE_WORKER')">
 									<a th:href="@{/rounds/manage-rounds(playerId=${player.playerId})}"
 									   class="btn btn-outline-secondary btn-sm">
 										Za kolejki
 									</a>
 								</div>
-								<div sec:authorize="hasAnyRole('ROLE_ACCOUNTANT')">
+								<div sec:authorize="hasAnyRole('ROLE_WORKER')">
 									<a th:href="@{/seasons/manage-seasons(playerId=${player.playerId})}"
 									   class="btn btn-outline-secondary btn-sm ">
 										Za sezony

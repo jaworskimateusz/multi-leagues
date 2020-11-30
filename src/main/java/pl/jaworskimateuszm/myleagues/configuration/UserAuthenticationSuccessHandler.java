@@ -19,10 +19,6 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
     @Autowired
     private UserMapper userMapper;
 
-//    public UserAuthenticationSuccessHandler(UserMapper userMapper) {
-//        this.userMapper = userMapper;
-//    }
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,

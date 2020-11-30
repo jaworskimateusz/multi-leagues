@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.LeagueMapper;
 import pl.jaworskimateuszm.myleagues.mapper.PlayerMapper;
+import pl.jaworskimateuszm.myleagues.mapper.UserMapper;
 import pl.jaworskimateuszm.myleagues.model.League;
 import pl.jaworskimateuszm.myleagues.model.Player;
 import pl.jaworskimateuszm.myleagues.model.PlayerDetail;
+import pl.jaworskimateuszm.myleagues.model.User;
 
 import javax.validation.Valid;
 
@@ -19,24 +21,24 @@ import javax.validation.Valid;
 @RequestMapping("/players")
 public class PlayerController {
 
-	private PlayerMapper playerMapper;
+	private UserMapper userMapper;
 	private LeagueMapper leagueMapper;
 
-	public PlayerController(PlayerMapper playerMapper, LeagueMapper leagueMapper) {
-		this.playerMapper = playerMapper;
+	public PlayerController(UserMapper userMapper, LeagueMapper leagueMapper) {
+		this.userMapper = userMapper;
 		this.leagueMapper = leagueMapper;
 	}
 
 	@GetMapping("/list")
 	public String listPlayers(Model model) {
-		List<Player> players = playerMapper.findAll();
+		List<User> players = userMapper.findAllByRole("PLAYER");
 		model.addAttribute("players", players);
 		return "/players/list-players";
 	}
 	
 	@GetMapping("/add")
 	public String add(Model model) {
-		model.addAttribute("player", new Player());
+		model.addAttribute("player", new User());
 		List<League> leagues = leagueMapper.findAll();
 		model.addAttribute("leagues", leagues);
 		return "/players/player-form";
@@ -44,7 +46,7 @@ public class PlayerController {
 
 	@GetMapping("/update")
 	public String update(@RequestParam("playerId") int id, Model model) {
-		Player player = playerMapper.findById(id);
+		User player = userMapper.findById(id);
 		List<League> leagues = leagueMapper.findAll();
 		model.addAttribute("leagues", leagues);
 		model.addAttribute("player", player);
@@ -53,25 +55,25 @@ public class PlayerController {
 
 	@GetMapping("/detail")
 	public String detail(@RequestParam("playerId") int id, Model model) {
-		Player player = playerMapper.findById(id);
-		List<PlayerDetail> details = playerMapper.findAllDetailById(id);
+		User player = userMapper.findById(id);
+		List<PlayerDetail> details = userMapper.findAllDetailById(id);
 		model.addAttribute("player", player);
 		model.addAttribute("details", details);
 		return "/players/player-detail";
 	}
 	
 	@PostMapping("/save")
-	public String save(@Valid @ModelAttribute("player") Player player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	public String save(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			redirectAttributes.addFlashAttribute("error", true);
 			return "redirect:/players/add";
 		}
-		if (playerMapper.findById(player.getPlayerId()) != null) {
-			playerMapper.update(player);
-			Arrays.stream(player.getLeagueIds()).forEach(leagueId -> playerMapper.updatePlayerLeague(player.getPlayerId(), leagueId));
+		if (userMapper.findById(player.getUserId()) != null) {
+			userMapper.update(player);
+			Arrays.stream(player.getLeagueIds()).forEach(leagueId -> userMapper.updatePlayerLeague(player.getUserId(), leagueId));
 		} else {
-			playerMapper.insert(player);
-			Arrays.stream(player.getLeagueIds()).forEach(leagueId -> playerMapper.insertPlayerLeague(player.getPlayerId(), leagueId));
+			userMapper.insert(player);
+			Arrays.stream(player.getLeagueIds()).forEach(leagueId -> userMapper.insertPlayerLeague(player.getUserId(), leagueId));
 		}
 
 		return "redirect:/players/list";
@@ -79,8 +81,9 @@ public class PlayerController {
 	
 	@GetMapping("/delete")
 	public String delete(@RequestParam("playerId") int playerId) {
-		playerMapper.deletePlayerLeagueById(playerId);
-		playerMapper.deleteById(playerId);
+		userMapper.deletePlayerLeagueById(playerId);
+		userMapper.deleteByIdFromAuthorities(playerId);
+		userMapper.deleteById(playerId);
 		return "redirect:/players/list";
 	}
 	
@@ -89,7 +92,7 @@ public class PlayerController {
 						 @RequestParam("gameId") int gameId,
 						 @RequestParam("whichOne") String whichOne,
 						 Model model) {
-		List<Player> players = playerMapper.searchBy(pesel);
+		List<User> players = userMapper.searchBy(pesel);
 		model.addAttribute("players", players);
 		model.addAttribute("gameId", gameId);
 		model.addAttribute("whichOne", whichOne.equals("") ? null : whichOne);
@@ -98,7 +101,7 @@ public class PlayerController {
 
 	@GetMapping("/choose-player")
 	public String choosePlayer(@RequestParam("gameId") int gameId, @RequestParam("whichOne") String whichOne, Model model) {
-		List<Player> players = playerMapper.findAll();
+		List<User> players = userMapper.findAllByRole("PLAYER");
 		model.addAttribute("gameId", gameId);
 		model.addAttribute("players", players);
 		model.addAttribute("whichOne", whichOne);

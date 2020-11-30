@@ -30,9 +30,6 @@
 			<li class="nav-item ml-12">
 				<a class="nav-link" th:href="@{/players/list}">Zawodnicy</a>
 			</li>
-			<li class="nav-item" sec:authorize="hasRole('ROLE_ACCOUNTANT')">
-				<a class="nav-link" th:href="@{/places/list}">Obiekty</a>
-			</li>
 			<li class="nav-item" sec:authorize="hasRole('ROLE_WORKER')">
 				<a class="nav-link" th:href="@{/games/list}">Mecze</a>
 			</li>
@@ -175,6 +172,8 @@
 							</svg>
 						</div>
 					</div>
+					<h3>Wybierz kolejkę lub turniej</h3>
+					Wybieram turniej
 					<label th:if="${readWrite}">Wybierz kolejkę</label>
 					<label th:if="${readWrite == false}">Kolejka:</label>
 					<select class="form-control selectpicker col-4 mb-5" th:field="*{roundId}">
@@ -183,7 +182,15 @@
 								th:value="${round.roundId}"
 								th:utext="${round.discipline} + ', numer: ' + ${round.number}"/>
 					</select>
-
+					<br>
+					<label th:if="${readWrite}">Wybierz turniej</label>
+					<label th:if="${readWrite == false}">Turniej:</label>
+					<select class="form-control selectpicker col-4 mb-5" th:field="*{tournamentId}">
+						<option th:if="${readWrite}" th:value="-1">---</option>
+						<option th:each="tournament : ${tournaments}"
+								th:value="${tournament.torunamentId}"
+								th:utext="${tournament.name} + ', lokalizacja: ' + ${tournament.location}"/>
+					</select>
 					<br>
 					<button th:if="${readWrite}" type="submit" class="btn btn-outline-dark btn-md mt-5">Zapisz</button>
 				</form>

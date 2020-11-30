@@ -2,18 +2,16 @@ package pl.jaworskimateuszm.myleagues.model;
 
 import org.springframework.format.annotation.NumberFormat;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
-public class User {
+public class NewUser {
 
-    private long userId;
     @Size(max = 45, message= "Maksymalna długość to 45 znaków.")
     private String username;
     @Size(max = 64, message= "Maksymalna długość to 64 znaków.")
     private String password;
+    @Size(max = 64, message= "Maksymalna długość to 64 znaków.")
+    private String repeatedPassword;
     private int enabled;
     private String role;
     @NotEmpty
@@ -31,36 +29,15 @@ public class User {
     @Min(0)
     private long phoneNumber;
 
-    private int[] leagueIds;
-
-    public User(String username, String password, int enabled, String role, String name, String surname, long pesel, long phoneNumber) {
-        this.username = username;
-        this.password = password;
-        this.enabled = enabled;
-        this.role = role;
-        this.name = name;
-        this.surname = surname;
-        this.pesel = pesel;
-        this.phoneNumber = phoneNumber;
+    public NewUser() {
     }
 
-    public User() {
+    public String getRepeatedPassword() {
+        return repeatedPassword;
     }
 
-    public int[] getLeagueIds() {
-        return leagueIds;
-    }
-
-    public void setLeagueIds(int[] leagueIds) {
-        this.leagueIds = leagueIds;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
     }
 
     public String getName() {

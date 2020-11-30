@@ -5,7 +5,6 @@ import javax.validation.constraints.Size;
 
 public class League {
     private int leagueId;
-    private int objectId;
     private int disciplineId;
 
     @NotEmpty
@@ -25,14 +24,6 @@ public class League {
 
     public void setLeagueId(int leagueId) {
         this.leagueId = leagueId;
-    }
-
-    public int getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(int objectId) {
-        this.objectId = objectId;
     }
 
     public int getDisciplineId() {

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="pl">
 <head>
-	<title>Formularz obiektu</title>
+	<title>Formularz kolejki</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -28,9 +28,6 @@
 			</li>
 			<li class="nav-item ml-12">
 				<a class="nav-link" th:href="@{/players/list}">Zawodnicy</a>
-			</li>
-			<li class="nav-item" sec:authorize="hasRole('ROLE_ACCOUNTANT')">
-				<a class="nav-link" th:href="@{/places/list}">Obiekty</a>
 			</li>
 			<li class="nav-item" sec:authorize="hasRole('ROLE_WORKER')">
 				<a class="nav-link" th:href="@{/games/list}">Mecze</a>
@@ -67,32 +64,30 @@
 	<div class="container" >
 		<div class="row">
 			<div class="col-md-12">
-				<h3 class="mt-5 pt-4">Obiekty</h3>
+				<h3 class="mt-5 pt-4">Ligi</h3>
 				<hr>
-				<p class="h4 mb-4">Dodawanie/edycja obiektu</p>
-				<form th:action="@{/places/save}"
-					  th:object="${place}" method="POST">
+				<p class="h4 mb-4">Dodawanie/edycja ligi</p>
+				<form th:action="@{/leagues/save}"
+					  th:object="${league}" method="POST">
 					<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
 						Podane wartości są niepoprawne.
 					</div>
-					<input type="hidden" th:field="*{placeId}" />
-					<h5 class="mb-4" th:text="${place.name}" sec:authorize="hasRole('ROLE_ACCOUNTANT')"></h5>
-					<input type="text" th:field="*{name}" maxlength="45" sec:authorize="hasRole('ROLE_ORGANISER')"
-						   class="form-control mb-4 col-4" placeholder="Nazwa *">
-					<input type="hidden" th:field="*{name}" class="form-control mb-4 col-4">
-					<input type="number" min="0" th:field="*{numberOfHours}"
-						   class="form-control mb-4 col-4" placeholder="Liczba godzin *">
-					<input type="number" th:field="*{cost}" min="0" step="any"
-						   class="form-control mb-4 col-4" placeholder="Łączny koszt (zł) *">
-<!--					<input type="number" th:field="*{confirmed}"-->
-<!--						   class="form-control mb-4 col-4" placeholder="Potwierdzono*">-->
-					<label>Potwierdzenie opłaty obiektu:</label>
-					<input type="checkbox" name="confirmedFlag" th:checked="*{confirmedFlag} ? false: true" />
-					<br>
-					<button type="submit" class="btn btn-outline-dark btn-sm">Zapisz</button>
+					<input type="hidden" th:field="*{leagueId}" />
+					<input type="number" min="0" th:field="*{number}"
+						   class="form-control mb-4 col-4" placeholder="Numer *">
+					<input type="text" th:field="*{description}" maxlength="45"
+						   class="form-control mb-4 col-4" placeholder="Opis *">
+					<label>Wybierz sezon</label>
+					<select class="form-control selectpicker col-4" th:field="*{disciplineId}">
+						<option th:value="-1">---</option>
+						<option th:each="discipline : ${disciplines}"
+								th:value="${discipline.disciplineId}"
+								th:utext="${discipline.type}"/>
+					</select>
+					<button type="submit" class="btn btn-outline-dark btn-sm mt-5">Zapisz</button>
 				</form>
 				<hr>
-				<a class="btn btn-light btn-sm active" th:href="@{/places/list}">Powrót do listy obiektów</a>
+				<a class="btn btn-light btn-sm active" th:href="@{/rounds/list}">Powrót do listy lig</a>
 			</div>
 		</div>
 	</div>

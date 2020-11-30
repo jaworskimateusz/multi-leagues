@@ -17,26 +17,28 @@ USE `moje_ligi` ;
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
-  `password` char(68) NOT NULL,
+  `password` varchar(68) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
   `role` varchar(45) NOT NULL,
   `imie` VARCHAR(45) NOT NULL,
   `nazwisko` VARCHAR(45) NOT NULL,
-  `pesel` VARCHAR(11) NOT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB;
+  `pesel` BIGINT DEFAULT NULL,
+  `numer_telefonu` INT NOT NULL,
+  PRIMARY KEY (`user_id`, `username`),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE)
+ENGINE=InnoDB;
 
 --
 -- Table structure for table `authorities`
 --
 
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`authorities` (
-  `user_id` INT NOT NULL,
+  `username` varchar(50) NOT NULL,
   `authority` varchar(50) NOT NULL,
-  UNIQUE KEY `authorities_idx_1` (`user_id`,`authority`),
+  INDEX `fk_authorities_users1_idx` (`username` ASC) VISIBLE,
   CONSTRAINT `authorities_ibfk_1`
-  FOREIGN KEY (`user_id`)
-  REFERENCES `moje_ligi`.`users` (`user_id`)
+  FOREIGN KEY (`username`)
+  REFERENCES `moje_ligi`.`users` (`username`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB;
@@ -74,7 +76,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `moje_ligi`.`dyscyplina`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moje_ligi`.`dyscyplina` (
+CREATE TABLE IF NOT EXISTS `moje_ligi`.`dyscypliny` (
   `id_dyscypliny` INT NOT NULL AUTO_INCREMENT,
   `typ` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_dyscypliny`))
@@ -87,17 +89,10 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`ligi` (
   `id_ligi` INT NOT NULL AUTO_INCREMENT,
   `poziom` VARCHAR(45) NOT NULL,
-  `id_obiektu` INT NULL,
   `opis` VARCHAR(100) NOT NULL,
   `id_dyscypliny` INT NULL,
   PRIMARY KEY (`id_ligi`),
-  INDEX `fk_ligi_obiekty1_idx` (`id_obiektu` ASC) VISIBLE,
   INDEX `fk_ligi_dyscyplina1_idx` (`id_dyscypliny` ASC) VISIBLE,
-  CONSTRAINT `fk_ligi_obiekty1`
-    FOREIGN KEY (`id_obiektu`)
-    REFERENCES `moje_ligi`.`obiekty` (`id_obiektu`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
   CONSTRAINT `fk_ligi_dyscyplina1`
     FOREIGN KEY (`id_dyscypliny`)
     REFERENCES `moje_ligi`.`dyscyplina` (`id_dyscypliny`)
@@ -233,10 +228,9 @@ ENGINE = InnoDB;
 
 INSERT INTO `moje_ligi`.`users`
 VALUES
-(1,'mati','$2a$10$Gf6ln1gEsljuFOEkGi2/6eFhYmueU5Wp42JCulP8sZv/i4uJv1OUS',1, 'WORKER', 'Mateusz', 'Jaw',98040512421),
-(2,'marta','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'ACCOUNTANT','Maria', 'Em',99040512421),
-(3,'jakub','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'WORKER','Kuba', 'S',95040512421),
-(4,'dario','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'PLAYER','Dario', 'Pietrek',98040512421);
+(1,'mati','$2a$10$Gf6ln1gEsljuFOEkGi2/6eFhYmueU5Wp42JCulP8sZv/i4uJv1OUS',1, 'WORKER', 'Mateusz', 'Jaw',98040512421, 724123123),
+(2,'jakub','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'WORKER','Kuba', 'S',95040512421, 661213432),
+(3,'dario','$2a$10$LIVPX4xTMEnFNrKZTOWKjuOIlMSBqUXZr6f4YtQWjr2sVMbjZKLfG',1, 'PLAYER','Dario', 'Pietrek',98040512421, 693432912);
 
 --
 -- Dumping data for table `authorities`
@@ -244,17 +238,16 @@ VALUES
 
 INSERT INTO `moje_ligi`.`authorities`
 VALUES
-(1,'ROLE_WORKER'),
-(2,'ROLE_ACCOUNTANT'),
-(3,'ROLE_WORKER'),
-(4,'ROLE_PLAYER');
+('mati','ROLE_WORKER'),
+('jakub','ROLE_WORKER'),
+('dario','ROLE_PLAYER');
 
 
-INSERT INTO `moje_ligi`.`dyscyplina` (`typ`)
+INSERT INTO `moje_ligi`.`dyscypliny` (`typ`)
 VALUES ('Boks'),('Tenis ziemny'),('Tenis stołowy'),('Dwa ognie');
 
 INSERT INTO `moje_ligi`.`ligi`
-(`poziom`,`opis`,`id_obiektu`, `id_dyscypliny`) VALUES('WYS','Liga tenisa stołowego', null, 1);
+(`poziom`,`opis`, `id_dyscypliny`) VALUES('WYS','Liga tenisa stołowego', 1);
 
 INSERT INTO `moje_ligi`.`wpisowe`
 (`typ`,`data_uiszczenia`,`zaplacono`,`user_id`)

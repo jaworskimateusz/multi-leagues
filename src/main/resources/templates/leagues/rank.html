@@ -3,7 +3,7 @@
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-	<title>Obiekty</title>
+	<title>Kolejki</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -29,9 +29,6 @@
 			</li>
 			<li class="nav-item ml-12">
 				<a class="nav-link" th:href="@{/players/list}">Zawodnicy</a>
-			</li>
-			<li class="nav-item" sec:authorize="hasRole('ROLE_ACCOUNTANT')">
-				<a class="nav-link" th:href="@{/places/list}">Obiekty</a>
 			</li>
 			<li class="nav-item" sec:authorize="hasRole('ROLE_WORKER')">
 				<a class="nav-link" th:href="@{/games/list}">Mecze</a>
@@ -68,53 +65,71 @@
 	<div class="container" >
 		<div class="row">
 			<div class="col-md-12">
-				<h3 class="mt-5 pt-4">Lista Obiektów</h3>
+				<h3 class="mt-5 pt-4">Lista Lig</h3>
 				<hr>
-				<form th:action="@{/places/search}"  class="form-inline mb-3">
-					<a th:href="@{/places/add} " sec:authorize="hasAnyRole('ROLE_ORGANISER')"
+				<form th:action="@{/leagues/search}" class="form-inline mb-3">
+					<a sec:authorize="hasRole('ROLE_ADMIN')" th:if="${confirm != 1}" th:href="@{/leagues/add}"
 					   class="btn btn-outline-dark mr-5">
-						Dodaj Obiekt
+						Dodaj Ligę
 					</a>
+					<input type="hidden" name="confirm" th:value="${confirm != null} ? ${confirm} : -1">
+					<input type="hidden" name="playerId" th:value="${playerId != null} ? ${playerId} : -1">
 					<input class="form-control ml-5 mr-sm-2 nav navbar-nav navbar-right pl-2 col row justify-content-end"
-							   type="search" name="name" placeholder=" Szukaj po nazwie" />
+							    type="text" name="level" min="0" placeholder=" Szukaj po opisie" />
 					<button class="btn btn-dark pl-2" style="position:absolute; right: 15px" type="submit">Wyszukaj</button>
 				</form>
 				<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
 					Niepoprawny parametr wyszukiwania.
 				</div>
-				<div th:if="${places.isEmpty()}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
+				<div th:if="${leagues.isEmpty()}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
 					Nie znaleziono.
 				</div>
 				<table class="table table-bordered table-striped">
 					<thead class="thead-dark">
 					<tr>
-						<th>Nazwa obiektu</th>
-						<th>Łączny koszt</th>
-						<th>Liczba godzin</th>
-						<th>Potwierdzenie opłaty</th>
+						<th>Opis</th>
+						<th>Numer</th>
 						<th>Akcja</th>
 					</tr>
 					</thead>
 					<tbody>
-					<tr th:each="place : ${places}">
-
-						<td th:text="${place.name}" />
-						<td th:text="${place.cost} + ' ' + zł" />
-						<td th:text="${place.numberOfHours}" />
-						<td th:text="${place.confirmed == 1} ? 'potwierdzono' : 'nie potwierdzono'" />
-
-						<td class="form-inline">
-							<div sec:authorize="hasAnyRole('ROLE_ACCOUNTANT')">
-								<a th:href="@{/places/update(placeId=${place.placeId})}"
+					<tr th:each="league : ${leagues}">
+						<td th:text="${league.description}" />
+						<td th:text="${league.number}" />
+						<td th:if="${confirm != 1}" class="form-inline">
+							<div sec:authorize="hasAnyRole('ROLE_ADMIN')">
+								<a th:href="@{/leagues/update(leagueId=${league.leagueId})}"
 								   class="btn btn-outline-secondary btn-sm">
 									Edytuj
 								</a>
 							</div>
-							<div sec:authorize="hasRole('ROLE_ORGANISER')">
-								<a th:href="@{/places/delete(placeId=${place.placeId})}"
+							<div sec:authorize="hasRole('ROLE_ADMIN')">
+								<a th:href="@{/leagues/delete(leagueId=${league.leagueId})}"
 								   class="btn btn-dark btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz usunąć obiekt?'))) return false">
+								   onclick="if (!(confirm('Czy na pewno chcesz usunąć ligę?'))) return false">
 									Usuń
+								</a>
+							</div>
+							<div>
+								<a th:href="@{/leagues/rank(leagueId=${league.leagueId})}"
+								   class="btn btn-outline-secondary btn-sm">
+									Zobacz ranking
+								</a>
+							</div>
+						</td>
+						<td th:if="${confirm == 1}" class="form-inline">
+							<div sec:authorize="hasRole('ROLE_ADMIN')">
+								<a th:if="${league.confirmed == 0}" th:href="@{/leagues/confirm-payment(leagueId=${league.leagueId}, playerId=${playerId})}"
+								   class="btn btn-outline-secondary btn-sm ml-1"
+								   onclick="if (!(confirm('Czy na pewno chcesz potwierdzić wpisowe?'))) return false">
+									Potwierdź wpisowe
+								</a>
+							</div>
+							<div th:if="${round.confirmed == 1}" sec:authorize="hasRole('ROLE_ADMIN')">
+								<a th:href="@{/leagues/cancel-payment(leagueId=${league.leagueUd}, playerId=${playerId})}"
+								   class="btn btn-dark btn-sm ml-1"
+								   onclick="if (!(confirm('Czy na pewno chcesz anulować wpisowe?'))) return false">
+									Anuluj wpisowe
 								</a>
 							</div>
 						</td>

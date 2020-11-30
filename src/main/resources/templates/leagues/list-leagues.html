@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="pl">
+<html lang="pl"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-	<title>Formularz setu</title>
+	<title>Kolejki</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -19,7 +20,7 @@
 	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item active">
-				<a class="nav-link" href="#">
+				<a class="nav-link" href="/home">
 					<svg class="bi bi-house" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 						<path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
 						<path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
@@ -47,8 +48,8 @@
 					</svg>
 					Zalogowany użytkownik: <b th:inline="text"> [[${#httpServletRequest.remoteUser}]] </b>
 					[
-						<span sec:authorize="hasRole('ROLE_ACCOUNTANT')" class="white-text">księgowość </span>
-						<span sec:authorize="hasRole('ROLE_WORKER')" class="white-text">pracownik</span>
+					<span sec:authorize="hasRole('ROLE_ACCOUNTANT')" class="white-text">księgowość </span>
+					<span sec:authorize="hasRole('ROLE_WORKER')" class="white-text">pracownik</span>
 					]
 				</a>
 			</li>
@@ -64,30 +65,77 @@
 	<div class="container" >
 		<div class="row">
 			<div class="col-md-12">
-				<h3 class="mt-5 pt-4">Sety</h3>
+				<h3 class="mt-5 pt-4">Lista Lig</h3>
 				<hr>
-				<p class="h4 mb-4">Dodawanie/edycja setu</p>
-				<form th:action="@{/games/save-set}"
-					  th:object="${gameSet}" method="POST">
-					<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
-						Podane wartości są niepoprawne.
-					</div>
-					<input type="hidden" th:field="*{gameSetId}" />
-					<input type="hidden" name="gameId" th:field="*{gameId}" />
-					<label class="ml-2">Numer:</label>
-					<input type="number" min="0" th:field="*{number}"
-						   class="form-control mb-4 col-3 ml-2" >
-					<label class="ml-2">Wynik I zawodnika:</label>
-					<input type="number" min="0" th:field="*{firstPlayerScore}"
-						   class="form-control mb-4 col-2 ml-2" >
-					<label class="ml-2">Wynik II zawodnika:</label>
-					<input type="number" min="0" th:field="*{secondPlayerScore}"
-						   class="form-control mb-4 col-2 ml-2" >
-
-					<button type="submit" class="btn btn-outline-dark btn-sm mt-5">Zapisz</button>
+				<form th:action="@{/leagues/search}" class="form-inline mb-3">
+					<a sec:authorize="hasRole('ROLE_ADMIN')" th:if="${confirm != 1}" th:href="@{/leagues/add}"
+					   class="btn btn-outline-dark mr-5">
+						Dodaj Ligę
+					</a>
+					<input type="hidden" name="confirm" th:value="${confirm != null} ? ${confirm} : -1">
+					<input type="hidden" name="playerId" th:value="${playerId != null} ? ${playerId} : -1">
+					<input class="form-control ml-5 mr-sm-2 nav navbar-nav navbar-right pl-2 col row justify-content-end"
+							    type="text" name="level" min="0" placeholder=" Szukaj po opisie" />
+					<button class="btn btn-dark pl-2" style="position:absolute; right: 15px" type="submit">Wyszukaj</button>
 				</form>
-				<hr>
-<!--				<a class="btn btn-light btn-sm active" th:href="@{/games/list}">Powrót do edycji meczu</a>-->
+				<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
+					Niepoprawny parametr wyszukiwania.
+				</div>
+				<div th:if="${leagues.isEmpty()}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
+					Nie znaleziono.
+				</div>
+				<table class="table table-bordered table-striped">
+					<thead class="thead-dark">
+					<tr>
+						<th>Opis</th>
+						<th>Poziom</th>
+						<th>Akcja</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="league : ${leagues}">
+						<td th:text="${league.description}" />
+						<td th:text="${league.level}" />
+						<td th:if="${confirm != 1}" class="form-inline">
+							<div sec:authorize="hasAnyRole('ROLE_ADMIN')">
+								<a th:href="@{/leagues/update(leagueId=${league.leagueId})}"
+								   class="btn btn-outline-secondary btn-sm">
+									Edytuj
+								</a>
+							</div>
+							<div sec:authorize="hasRole('ROLE_ADMIN')">
+								<a th:href="@{/leagues/delete(leagueId=${league.leagueId})}"
+								   class="btn btn-dark btn-sm ml-1"
+								   onclick="if (!(confirm('Czy na pewno chcesz usunąć ligę?'))) return false">
+									Usuń
+								</a>
+							</div>
+							<div>
+								<a th:href="@{/leagues/rank(leagueId=${league.leagueId})}"
+								   class="btn btn-outline-secondary btn-sm">
+									Zobacz ranking
+								</a>
+							</div>
+						</td>
+						<td th:if="${confirm == 1}" class="form-inline">
+							<div sec:authorize="hasRole('ROLE_ADMIN')">
+								<a th:if="${league.confirmed == 0}" th:href="@{/leagues/confirm-payment(leagueId=${league.leagueId}, playerId=${playerId})}"
+								   class="btn btn-outline-secondary btn-sm ml-1"
+								   onclick="if (!(confirm('Czy na pewno chcesz potwierdzić wpisowe?'))) return false">
+									Potwierdź wpisowe
+								</a>
+							</div>
+							<div th:if="${round.confirmed == 1}" sec:authorize="hasRole('ROLE_ADMIN')">
+								<a th:href="@{/leagues/cancel-payment(leagueId=${league.leagueUd}, playerId=${playerId})}"
+								   class="btn btn-dark btn-sm ml-1"
+								   onclick="if (!(confirm('Czy na pewno chcesz anulować wpisowe?'))) return false">
+									Anuluj wpisowe
+								</a>
+							</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -95,14 +143,8 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-
 </body>
 </html>
-
-
-
-
 
 
 
