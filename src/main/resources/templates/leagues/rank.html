@@ -65,75 +65,34 @@
 	<div class="container" >
 		<div class="row">
 			<div class="col-md-12">
-				<h3 class="mt-5 pt-4">Lista Lig</h3>
+				<h3 class="mt-5 pt-4">Ranking</h3>
 				<hr>
-				<form th:action="@{/leagues/search}" class="form-inline mb-3">
-					<a sec:authorize="hasRole('ROLE_ADMIN')" th:if="${confirm != 1}" th:href="@{/leagues/add}"
-					   class="btn btn-outline-dark mr-5">
-						Dodaj Ligę
-					</a>
+				<form th:action="@{/leagues/search/rank}" class="form-inline mb-3">
 					<input type="hidden" name="confirm" th:value="${confirm != null} ? ${confirm} : -1">
 					<input type="hidden" name="playerId" th:value="${playerId != null} ? ${playerId} : -1">
 					<input class="form-control ml-5 mr-sm-2 nav navbar-nav navbar-right pl-2 col row justify-content-end"
-							    type="text" name="level" min="0" placeholder=" Szukaj po opisie" />
+							    type="text" name="surname" placeholder=" Szukaj po nazwisku" />
 					<button class="btn btn-dark pl-2" style="position:absolute; right: 15px" type="submit">Wyszukaj</button>
 				</form>
-				<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
-					Niepoprawny parametr wyszukiwania.
-				</div>
-				<div th:if="${leagues.isEmpty()}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
+				<div th:if="${ranks.isEmpty()}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
 					Nie znaleziono.
 				</div>
 				<table class="table table-bordered table-striped">
 					<thead class="thead-dark">
-					<tr>
-						<th>Opis</th>
-						<th>Numer</th>
-						<th>Akcja</th>
-					</tr>
+						<tr>
+							<th>Imie zawodnika</th>
+							<th>Nazwisko zawodnika</th>
+							<th>Punkty</th>
+							<th>Dyscyplina</th>
+						</tr>
 					</thead>
 					<tbody>
-					<tr th:each="league : ${leagues}">
-						<td th:text="${league.description}" />
-						<td th:text="${league.number}" />
-						<td th:if="${confirm != 1}" class="form-inline">
-							<div sec:authorize="hasAnyRole('ROLE_ADMIN')">
-								<a th:href="@{/leagues/update(leagueId=${league.leagueId})}"
-								   class="btn btn-outline-secondary btn-sm">
-									Edytuj
-								</a>
-							</div>
-							<div sec:authorize="hasRole('ROLE_ADMIN')">
-								<a th:href="@{/leagues/delete(leagueId=${league.leagueId})}"
-								   class="btn btn-dark btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz usunąć ligę?'))) return false">
-									Usuń
-								</a>
-							</div>
-							<div>
-								<a th:href="@{/leagues/rank(leagueId=${league.leagueId})}"
-								   class="btn btn-outline-secondary btn-sm">
-									Zobacz ranking
-								</a>
-							</div>
-						</td>
-						<td th:if="${confirm == 1}" class="form-inline">
-							<div sec:authorize="hasRole('ROLE_ADMIN')">
-								<a th:if="${league.confirmed == 0}" th:href="@{/leagues/confirm-payment(leagueId=${league.leagueId}, playerId=${playerId})}"
-								   class="btn btn-outline-secondary btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz potwierdzić wpisowe?'))) return false">
-									Potwierdź wpisowe
-								</a>
-							</div>
-							<div th:if="${round.confirmed == 1}" sec:authorize="hasRole('ROLE_ADMIN')">
-								<a th:href="@{/leagues/cancel-payment(leagueId=${league.leagueUd}, playerId=${playerId})}"
-								   class="btn btn-dark btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz anulować wpisowe?'))) return false">
-									Anuluj wpisowe
-								</a>
-							</div>
-						</td>
-					</tr>
+						<tr th:each="rank : ${ranks}">
+							<td th:text="${rank.name}" />
+							<td th:text="${rank.surname}" />
+							<td th:text="${rank.points}" />
+							<td th:text="${rank.discipline}" />
+						</tr>
 					</tbody>
 				</table>
 			</div>

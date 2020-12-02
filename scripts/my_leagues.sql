@@ -269,6 +269,26 @@ INSERT INTO `moje_ligi`.`mecze`
 VALUES(STR_TO_DATE('18/02/2019 11:15','%d/%m/%Y %H:%i'),'Warszawianka',null,null,null, null,13);
 
 
+CREATE TABLE IF NOT EXISTS `moje_ligi`.`rankingi` (
+  `id_rankingu` INT NOT NULL AUTO_INCREMENT,
+  `imie` VARCHAR(45) NOT NULL,
+  `nazwisko` VARCHAR(45) NOT NULL,
+  `punkty` INT NOT NULL,
+  `dyscyplina` VARCHAR(45) NOT NULL,
+  `id_ligi` INT NOT NULL,
+  PRIMARY KEY (`id_rankingu`),
+  INDEX `fk_rankingi_ligi1_idx` (`id_ligi` ASC) VISIBLE,
+  CONSTRAINT `fk_rankingi_ligi1`
+    FOREIGN KEY (`id_ligi`)
+    REFERENCES `moje_ligi`.`ligi` (`id_ligi`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `moje_ligi`.`rankingi`
+(`imie`,`nazwisko`,`punkty`,`dyscyplina`,`id_ligi`)
+VALUES ('Dario', 'Pietrek', 9, 'Boks', 3),('Michał', 'Pęksyn', 6, 'Boks', 3), ('Kamin', 'Nen', 0, 'Boks', 3);
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

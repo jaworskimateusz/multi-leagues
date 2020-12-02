@@ -9,10 +9,7 @@ import pl.jaworskimateuszm.myleagues.mapper.DisciplineMapper;
 import pl.jaworskimateuszm.myleagues.mapper.LeagueMapper;
 import pl.jaworskimateuszm.myleagues.mapper.RoundMapper;
 import pl.jaworskimateuszm.myleagues.mapper.SeasonMapper;
-import pl.jaworskimateuszm.myleagues.model.Discipline;
-import pl.jaworskimateuszm.myleagues.model.League;
-import pl.jaworskimateuszm.myleagues.model.Round;
-import pl.jaworskimateuszm.myleagues.model.Season;
+import pl.jaworskimateuszm.myleagues.model.*;
 import pl.jaworskimateuszm.myleagues.utils.Parser;
 
 import javax.validation.Valid;
@@ -58,9 +55,23 @@ public class LeagueController {
 		return "/leagues/list-leagues";
 	}
 
+	@GetMapping("/search/rank")
+	public String searchRank(@RequestParam("surname") String surname,
+						 @RequestParam("confirm") int confirm,
+						 @RequestParam("playerId") int playerId,
+						 Model model) {
+		List<Rank> ranks = leagueMapper.findRankBySurname(surname);
+		model.addAttribute("ranks", ranks);
+		model.addAttribute("confirm", confirm);
+		model.addAttribute("playerId", playerId);
+
+		return "/leagues/rank";
+	}
+
 	@GetMapping("/rank")
-	public String showRank(@RequestParam("leagueId") int leagueId) {
-		//TODO rank
+	public String showRank(@RequestParam("leagueId") int leagueId, Model model) {
+		List<Rank> ranks = leagueMapper.findLeagueRank(leagueId);
+		model.addAttribute("ranks", ranks);
 		return "/leagues/rank";
 	}
 

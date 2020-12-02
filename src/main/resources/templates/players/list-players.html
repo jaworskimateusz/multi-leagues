@@ -126,7 +126,7 @@
 									</a>
 								</div>
 								<div th:if="${whichOne != null}"  sec:authorize="hasRole('ROLE_WORKER')">
-									<a th:if="${whichOne.equals('first')}" th:href="@{/games/add-first-player-to-game(playerId=${player.playerId}, gameId=${gameId})}"
+									<a th:if="${whichOne.equals('first')}" th:href="@{/games/add-first-player-to-game(playerId=${player.userId}, gameId=${gameId})}"
 									   class="btn btn-dark btn-sm ml-1">
 										Wybierz
 									</a>
