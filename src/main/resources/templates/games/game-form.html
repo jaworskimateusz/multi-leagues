@@ -65,9 +65,9 @@
 	<div class="container" >
 		<div class="row">
 			<div class="col-md-12">
-				<h3 class="mt-5 pt-4">Mecze</h3>
+				<h4 class="mt-5 pt-4">Mecze</h4>
 				<hr>
-				<p th:if="${readWrite}" class="h4 mb-4">Dodawanie/edycja meczu</p>
+				<p th:if="${readWrite}" class="h5 mb-4">Dodawanie/edycja meczu</p>
 				<p th:if="${readWrite == false}" class="h4 mb-4">Szczegóły meczu</p>
 				<form th:action="@{/games/save}"
 					  th:object="${game}" method="POST">
@@ -172,27 +172,28 @@
 							</svg>
 						</div>
 					</div>
-					<h3>Wybierz kolejkę lub turniej</h3>
-					Wybieram turniej
-					<label th:if="${readWrite}">Wybierz kolejkę</label>
-					<label th:if="${readWrite == false}">Kolejka:</label>
-					<select class="form-control selectpicker col-4 mb-5" th:field="*{roundId}">
-						<option th:if="${readWrite}" th:value="-1">---</option>
-						<option th:each="round : ${rounds}"
-								th:value="${round.roundId}"
-								th:utext="${round.discipline} + ', numer: ' + ${round.number}"/>
-					</select>
+					<h5>Wybierz kolejkę lub turniej
+						(* <input th:if="${readWrite}" class="mt-1" type="checkbox" /> )
+					</h5>
+
+					<div class="row mt-2 justify-content-around">
+						<select class="form-control selectpicker col-4 mb-4" th:field="*{roundId}">
+							<option th:if="${readWrite}" th:value="-1">--kolejka--</option>
+							<option th:each="round : ${rounds}"
+									th:value="${round.roundId}"
+									th:utext="${round.discipline} + ', numer: ' + ${round.number}"/>
+						</select>
+						<!--					Wybieram turniej: <input th:if="${readWrite}" type="checkbox" name="isTournament" th:checked="*{isTournament} ? true: false" />&ndash;&gt;-->
+						<select class="form-control selectpicker col-4 mb-4" th:field="*{tournamentId}">
+							<option th:if="${readWrite}" th:value="-1">--*turniej--</option>
+							<option th:each="tournament : ${tournaments}"
+									th:value="${tournament.torunamentId}"
+									th:utext="${tournament.name} + ', lokalizacja: ' + ${tournament.location}"/>
+						</select>
+					</div>
+
 					<br>
-					<label th:if="${readWrite}">Wybierz turniej</label>
-					<label th:if="${readWrite == false}">Turniej:</label>
-					<select class="form-control selectpicker col-4 mb-5" th:field="*{tournamentId}">
-						<option th:if="${readWrite}" th:value="-1">---</option>
-						<option th:each="tournament : ${tournaments}"
-								th:value="${tournament.torunamentId}"
-								th:utext="${tournament.name} + ', lokalizacja: ' + ${tournament.location}"/>
-					</select>
-					<br>
-					<button th:if="${readWrite}" type="submit" class="btn btn-outline-dark btn-md mt-5">Zapisz</button>
+					<button th:if="${readWrite}" type="submit" class="btn btn-outline-dark btn-md mt-2">Zapisz</button>
 				</form>
 				<hr>
 				<a th:if="${readWrite}" class="btn btn-light btn-sm active" th:href="@{/games/list}">Powrót do listy meczy</a>

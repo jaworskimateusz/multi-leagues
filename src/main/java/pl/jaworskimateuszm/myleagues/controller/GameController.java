@@ -6,10 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pl.jaworskimateuszm.myleagues.mapper.GameMapper;
-import pl.jaworskimateuszm.myleagues.mapper.PlayerMapper;
-import pl.jaworskimateuszm.myleagues.mapper.RoundMapper;
-import pl.jaworskimateuszm.myleagues.mapper.SetMapper;
+import pl.jaworskimateuszm.myleagues.mapper.*;
 import pl.jaworskimateuszm.myleagues.model.*;
 import pl.jaworskimateuszm.myleagues.utils.Parser;
 
@@ -22,13 +19,13 @@ import java.util.stream.Collectors;
 public class GameController {
 
 	private GameMapper gameMapper;
-	private PlayerMapper playerMapper;
+	private UserMapper userMapper;
 	private RoundMapper roundMapper;
 	private SetMapper setMapper;
 
-	public GameController(GameMapper gameMapper, PlayerMapper playerMapper, RoundMapper roundMapper, SetMapper setMapper) {
+	public GameController(GameMapper gameMapper, UserMapper userMapper, RoundMapper roundMapper, SetMapper setMapper) {
 		this.gameMapper = gameMapper;
-		this.playerMapper = playerMapper;
+		this.userMapper = userMapper;
 		this.roundMapper = roundMapper;
 		this.setMapper = setMapper;
 	}
@@ -57,15 +54,15 @@ public class GameController {
 		Game game = gameMapper.findById(id);
 		List<Round> rounds = roundMapper.findAll();
 		List<GameSet> gameSets = setMapper.findAllByGameId(id);
-		Player firstPlayer = playerMapper.findById(game.getFirstPlayerId());
-		Player secondPlayer = playerMapper.findById(game.getSecondPlayerId());
+		User firstPlayer = userMapper.findById(game.getFirstPlayerId());
+		User secondPlayer = userMapper.findById(game.getSecondPlayerId());
 		model.addAttribute("game", game);
 		model.addAttribute("firstPlayer", firstPlayer);
 		model.addAttribute("secondPlayer", secondPlayer);
 		model.addAttribute("secondPlayer", secondPlayer);
 		model.addAttribute("rounds", rounds);
 		model.addAttribute("gameSets", gameSets);
-		model.addAttribute("readWrite", true); //TODO find modelMap?
+		model.addAttribute("readWrite", true);
 		return "/games/game-form";
 	}
 	
@@ -189,8 +186,8 @@ public class GameController {
 		Game game = gameMapper.findById(id);
 		Round rounds = roundMapper.findById(game.getRoundId());
 		List<GameSet> gameSets = setMapper.findAllByGameId(id);
-		Player firstPlayer = playerMapper.findById(game.getFirstPlayerId());
-		Player secondPlayer = playerMapper.findById(game.getSecondPlayerId());
+		User firstPlayer = userMapper.findById(game.getFirstPlayerId());
+		User secondPlayer = userMapper.findById(game.getSecondPlayerId());
 		model.addAttribute("game", game);
 		model.addAttribute("firstPlayer", firstPlayer);
 		model.addAttribute("secondPlayer", secondPlayer);

@@ -28,14 +28,14 @@ public interface RoundMapper {
     List<Round> findAllByNumber(int number);
 
     @Select("SELECT kolejki.*, wpisowe.id_wpisowe as id_wpis, wpisowe.zaplacono as zap " +
-            "FROM zawodnicy\n" +
-            "    JOIN zawodnicy_ligi USING (id_zawodnika)\n" +
+            "FROM users\n" +
+            "    JOIN zawodnicy_ligi USING (user_id)\n" +
             "    JOIN ligi USING (id_ligi)\n" +
             "    JOIN sezony USING (id_ligi)\n" +
             "    JOIN kolejki USING (id_sezonu)\n" +
             "    JOIN wpisowe_kolejki USING (id_kolejki)\n" +
             "    JOIN wpisowe USING (id_wpisowe)\n" +
-            "WHERE zawodnicy.id_zawodnika = ${playerId}")
+            "WHERE users.user_id = ${playerId}")
     @Results({
             @Result(property = "seasonId", column = "id_sezonu"),
             @Result(property = "roundId", column = "id_kolejki"),

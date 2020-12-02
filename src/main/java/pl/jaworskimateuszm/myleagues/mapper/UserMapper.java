@@ -41,7 +41,7 @@ public interface UserMapper {
     User findByUsername(String username);
 
     @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
-            " FROM users WHERE user_id={id}")
+            " FROM users WHERE user_id=#{id}")
     @Results({
             @Result(property = "userId", column = "user_id"),
             @Result(property = "username", column = "username"),
@@ -108,13 +108,12 @@ public interface UserMapper {
     int deleteByIdFromAuthorities(int id);
 
     @Update("UPDATE zawodnicy_ligi SET user_id=#{userId}, id_ligi=#{leagueId} " +
-            "WHERE id_zawodnika=#{userId} AND id_ligi=#{leagueId}")
+            "WHERE user_id=#{userId} AND id_ligi=#{leagueId}")
     int updatePlayerLeague(long userId, long leagueId);
 
     @Insert("INSERT INTO zawodnicy_ligi (user_id, id_ligi) " +
             " VALUES (#{userId}, #{leagueId})")
     int insertPlayerLeague(long userId, long leagueId);
-
 
     @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
             " WHERE pesel = #{pesel}")
@@ -139,7 +138,7 @@ public interface UserMapper {
             "    JOIN sezony USING (id_ligi)\n" +
             "    JOIN kolejki USING (id_sezonu)\n" +
             "    JOIN mecze USING (id_kolejki)\n" +
-            " WHERE zawodnicy.id_zawodnika = #{playerId}")
+            " WHERE users.user_id = #{playerId}")
     @Results({
             @Result(property = "leagueDescription", column = "opis_ligi"),
             @Result(property = "seasonDescription", column = "opis_sezonu"),
@@ -152,9 +151,6 @@ public interface UserMapper {
 
     @Delete("DELETE FROM zawodnicy_ligi WHERE user_id = #{id}")
     int deletePlayerLeagueById(long id);
-
-    @Select("SELECT MAX(user_id) FROM users")
-    long getLastRegisteredUser();
 
     @Insert("INSERT INTO authorities (username, authority)" +
             " VALUES (#{username}, #{authority})")

@@ -24,6 +24,7 @@ public class Game {
     private  String place;
 
     private Boolean withoutPlayers = false;
+    private Boolean isTournament = false;
 
     public Game() {
 
@@ -37,6 +38,14 @@ public class Game {
         this.secondPlayerId = secondPlayerId;
         this.gameDate = gameDate;
         this.place = place;
+    }
+
+    public Boolean getTournament() {
+        return isTournament;
+    }
+
+    public void setTournament(Boolean tournament) {
+        isTournament = tournament;
     }
 
     public int getTournamentId() {
