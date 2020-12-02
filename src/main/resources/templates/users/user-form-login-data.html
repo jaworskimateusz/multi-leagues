@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="pl"
-	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="pl">
 <head>
-	<title>Kolejki</title>
+	<title>Formularz zawodnika</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -20,14 +19,14 @@
 	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item active">
-				<a class="nav-link" href="/home">
+				<a class="nav-link" href="#">
 					<svg class="bi bi-house" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 						<path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
 						<path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
 					</svg>
 				</a>
 			</li>
-			<li class="nav-item ml-12">
+			<li class="nav-item ml-12" sec:authorize="hasAnyRole('ROLE_ACCOUNTANT', 'ROLE_WORKER')">
 				<a class="nav-link" th:href="@{/players/list}">Zawodnicy</a>
 			</li>
 			<li class="nav-item" sec:authorize="hasRole('ROLE_WORKER')">
@@ -65,78 +64,54 @@
 	<div class="container" >
 		<div class="row">
 			<div class="col-md-12">
-				<h3 class="mt-5 pt-4">Lista Kolejek</h3>
+				<p class="h4 mb-4 mt-5 pt-4">Edycja danych logowania</p>
 				<hr>
-				<form th:action="@{/rounds/search}" class="form-inline mb-3">
-					<a th:if="${confirm != 1}" th:href="@{/rounds/add}"
-					   class="btn btn-outline-dark mr-5">
-						Dodaj Kolejkę
-					</a>
-					<input type="hidden" name="confirm" th:value="${confirm != null} ? ${confirm} : -1">
-					<input type="hidden" name="playerId" th:value="${playerId != null} ? ${playerId} : -1">
-					<input class="form-control ml-5 mr-sm-2 nav navbar-nav navbar-right pl-2 col row justify-content-end"
-							    type="number" name="number" min="0" placeholder=" Szukaj po numerze" />
-					<button class="btn btn-dark pl-2" style="position:absolute; right: 15px" type="submit">Wyszukaj</button>
+				<form th:action="@{/players/save-login-data}"
+					  th:object="${player}" method="POST">
+					<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
+						Podane wartości są niepoprawne.
+					</div>
+					<input type="hidden" th:field="*{userId}" />
+					<input type="hidden" th:field="*{name}" />
+					<input type="hidden" th:field="*{username}" />
+					<input type="hidden" th:field="*{surname}" />
+					<input type="hidden" th:field="*{enabled}" />
+					<input type="hidden" th:field="*{role}" />
+					<input type="hidden" th:field="*{pesel}" />
+					<input type="hidden" th:field="*{phoneNumber}" />
+					<input type="hidden" th:field="*{password}" />
+					<input type="password" th:field="*{actualPassword}" maxlength="68"
+						   class="form-control mb-4 col-4" placeholder="Aktualne hasło">
+					<input type="password" maxlength="68" th:field="*{newPassword}"
+						   class="form-control mb-4 col-4" placeholder="Nowe hasło">
+					<input type="password" maxlength="68" th:field="*{repeatNewPassword}"
+						   class="form-control mb-4 col-4" placeholder="Powtórz nowe hasło">
+					<button type="submit" class="btn btn-outline-dark btn-sm mt-2" >Zapisz</button>
+					<div >
+						<a th:href="@{/players/delete(playerId=*{userId})}"
+						   class="btn btn-danger btn-sm mt-3"
+						   onclick="if (!(confirm('Czy na pewno chcesz usunąć konto?'))) return false">
+							Usuń konto
+						</a>
+					</div>
 				</form>
-				<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
-					Niepoprawny parametr wyszukiwania.
-				</div>
-				<div th:if="${rounds.isEmpty()}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
-					Nie znaleziono.
-				</div>
-				<table class="table table-bordered table-striped">
-					<thead class="thead-dark">
-					<tr>
-						<th>Dyscyplina</th>
-						<th>Numer</th>
-						<th sec:authorize="hasRole('ROLE_WORKER')">Akcja</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr th:each="round : ${rounds}">
-						<td th:text="${round.discipline}" />
-						<td th:text="${round.number}" />
-						<td th:if="${confirm != 1}" class="form-inline">
-							<div sec:authorize="hasAnyRole('ROLE_WORKER')">
-								<a th:href="@{/rounds/update(roundId=${round.roundId})}"
-								   class="btn btn-outline-secondary btn-sm">
-									Edytuj
-								</a>
-							</div>
-							<div sec:authorize="hasRole('ROLE_WORKER')">
-								<a th:href="@{/rounds/delete(roundId=${round.roundId})}"
-								   class="btn btn-dark btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz usunąć kolejkę?'))) return false">
-									Usuń
-								</a>
-							</div>
-						</td>
-						<td th:if="${confirm == 1}" class="form-inline">
-							<div sec:authorize="hasRole('ROLE_WORKER')">
-								<a th:if="${round.confirmed == 0}" th:href="@{/rounds/confirm-payment(roundId=${round.roundId}, playerId=${playerId})}"
-								   class="btn btn-outline-secondary btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz potwierdzić wpisowe?'))) return false">
-									Potwierdź wpisowe
-								</a>
-							</div>
-							<div th:if="${round.confirmed == 1}" sec:authorize="hasRole('ROLE_WORKER')">
-								<a th:href="@{/rounds/cancel-payment(roundId=${round.roundId}, playerId=${playerId})}"
-								   class="btn btn-dark btn-sm ml-1"
-								   onclick="if (!(confirm('Czy na pewno chcesz anulować wpisowe?'))) return false">
-									Anuluj wpisowe
-								</a>
-							</div>
-						</td>
-					</tr>
-					</tbody>
-				</table>
+				<hr>
 			</div>
 		</div>
 	</div>
 </main>
-
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 

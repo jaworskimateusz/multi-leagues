@@ -31,6 +31,10 @@ public class User {
     @Min(0)
     private long phoneNumber;
 
+    private String actualPassword;
+    private String newPassword;
+    private String repeatNewPassword;
+
     private int[] leagueIds;
 
     public User(String username, String password, int enabled, String role, String name, String surname, long pesel, long phoneNumber) {
@@ -42,6 +46,30 @@ public class User {
         this.surname = surname;
         this.pesel = pesel;
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getActualPassword() {
+        return actualPassword;
+    }
+
+    public void setActualPassword(String actualPassword) {
+        this.actualPassword = actualPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getRepeatNewPassword() {
+        return repeatNewPassword;
+    }
+
+    public void setRepeatNewPassword(String repeatNewPassword) {
+        this.repeatNewPassword = repeatNewPassword;
     }
 
     public User() {

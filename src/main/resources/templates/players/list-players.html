@@ -118,7 +118,7 @@
 										Szczegóły
 									</a>
 								</div>
-								<div th:if="${whichOne == null}"  sec:authorize="hasRole('ROLE_WORKER')">
+								<div th:if="${whichOne == null}"  sec:authorize="hasRole('ROLE_ADMIN')">
 									<a th:href="@{/players/delete(playerId=${player.userId})}"
 									   class="btn btn-dark btn-sm ml-1"
 									   onclick="if (!(confirm('Czy na pewno chcesz usunąć zawodnika?'))) return false">

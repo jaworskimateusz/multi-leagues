@@ -104,8 +104,8 @@ public interface UserMapper {
     @Delete("DELETE FROM users WHERE user_id = #{id}")
     int deleteById(int id);
 
-    @Delete("DELETE FROM authorities WHERE user_id = #{id}")
-    int deleteByIdFromAuthorities(int id);
+    @Delete("DELETE FROM authorities WHERE username = #{username}")
+    int deleteByIdFromAuthorities(String username);
 
     @Update("UPDATE zawodnicy_ligi SET user_id=#{userId}, id_ligi=#{leagueId} " +
             "WHERE user_id=#{userId} AND id_ligi=#{leagueId}")

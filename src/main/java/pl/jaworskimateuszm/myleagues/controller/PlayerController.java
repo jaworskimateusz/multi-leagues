@@ -2,6 +2,10 @@ package pl.jaworskimateuszm.myleagues.controller;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +19,7 @@ import pl.jaworskimateuszm.myleagues.model.Player;
 import pl.jaworskimateuszm.myleagues.model.PlayerDetail;
 import pl.jaworskimateuszm.myleagues.model.User;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -23,6 +28,9 @@ public class PlayerController {
 
 	private UserMapper userMapper;
 	private LeagueMapper leagueMapper;
+
+	@Autowired
+	private PasswordEncoder bCryptPasswordEncoder;
 
 	public PlayerController(UserMapper userMapper, LeagueMapper leagueMapper) {
 		this.userMapper = userMapper;
@@ -82,9 +90,9 @@ public class PlayerController {
 	@GetMapping("/delete")
 	public String delete(@RequestParam("playerId") int playerId) {
 		userMapper.deletePlayerLeagueById(playerId);
-		userMapper.deleteByIdFromAuthorities(playerId);
+		userMapper.deleteByIdFromAuthorities(userMapper.findById(playerId).getUsername());
 		userMapper.deleteById(playerId);
-		return "redirect:/players/list";
+		return "redirect:/login";
 	}
 	
 	@GetMapping("/search")
@@ -106,6 +114,44 @@ public class PlayerController {
 		model.addAttribute("players", players);
 		model.addAttribute("whichOne", whichOne);
 		return "/players/list-players";
+	}
+
+	@GetMapping("/user-data")
+	public String updateUserData(HttpServletRequest request, Model model) {
+		User player = userMapper.findByUsername(request.getRemoteUser());
+		model.addAttribute("player", player);
+		return "/users/user-form-user-data";
+	}
+
+	@PostMapping("/save-user-data")
+	public String saveUserData(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			redirectAttributes.addFlashAttribute("error", true);
+			return "redirect:/players/user-data";
+		}
+		userMapper.update(player);
+		return "redirect:/players/list";
+	}
+
+	@GetMapping("/login-data")
+	public String updateLoginData(HttpServletRequest request, Model model) {
+		User player = userMapper.findByUsername(request.getRemoteUser());
+		model.addAttribute("player", player);
+		return "/users/user-form-login-data";
+	}
+
+	@PostMapping("/save-login-data")
+	public String saveLoginData(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors() ||
+			!BCrypt.checkpw(player.getActualPassword(), player.getPassword()) ||
+			!player.getNewPassword().equals(player.getRepeatNewPassword())
+		) {
+			redirectAttributes.addFlashAttribute("error", true);
+			return "redirect:/players/login-data";
+		}
+		player.setPassword(bCryptPasswordEncoder.encode(player.getNewPassword()));
+		userMapper.update(player);
+		return "redirect:/players/list";
 	}
 
 }
