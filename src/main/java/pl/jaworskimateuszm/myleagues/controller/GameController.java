@@ -1,5 +1,6 @@
 package pl.jaworskimateuszm.myleagues.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +34,25 @@ public class GameController {
 	@GetMapping("/list")
 	public String listGames(Model model) {
 		List<Game> games = gameMapper.findAll();
-		model.addAttribute("games", games);
+		List<GameWithPlayersView> gamesWithPlayers = new ArrayList<>();
+		games.forEach(game -> {
+			int firstPlayerId = game.getFirstPlayerId();
+			int secondPlayerId = game.getSecondPlayerId();
+			gamesWithPlayers.add(new GameWithPlayersView(
+					game.getRoundId(),
+					game.getFirstPlayerScore(),
+					game.getSecondPlayerScore(),
+					game.getFirstPlayerId(),
+					game.getSecondPlayerId(),
+					game.getGameDate(),
+					game.getPlace(),
+					firstPlayerId != 0 ? userMapper.findById(firstPlayerId).getName() : "",
+					firstPlayerId != 0 ? userMapper.findById(firstPlayerId).getSurname(): "",
+					secondPlayerId != 0 ? userMapper.findById(secondPlayerId).getName(): "",
+					secondPlayerId != 0 ? userMapper.findById(secondPlayerId).getSurname(): ""
+			));
+		});
+		model.addAttribute("games", gamesWithPlayers);
 		return "/games/list-games";
 	}
 	

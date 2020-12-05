@@ -111,14 +111,14 @@
 					<tr th:each="round : ${rounds}">
 						<td th:text="${round.discipline}" />
 						<td th:text="${round.number}" />
-						<td th:if="${confirm != 1}" class="form-inline">
-							<div sec:authorize="hasAnyRole('ROLE_WORKER')">
+						<td sec:authorize="hasRole('ROLE_WORKER')" th:if="${confirm != 1}" class="form-inline">
+							<div>
 								<a th:href="@{/rounds/update(roundId=${round.roundId})}"
 								   class="btn btn-outline-secondary btn-sm">
 									Edytuj
 								</a>
 							</div>
-							<div sec:authorize="hasRole('ROLE_WORKER')">
+							<div>
 								<a th:href="@{/rounds/delete(roundId=${round.roundId})}"
 								   class="btn btn-dark btn-sm ml-1"
 								   onclick="if (!(confirm('Czy na pewno chcesz usunąć kolejkę?'))) return false">

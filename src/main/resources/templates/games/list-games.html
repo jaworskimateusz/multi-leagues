@@ -138,8 +138,10 @@
 
 						<td th:text="${game.place}" />
 						<td th:text="${{game.gameDate}}" />
-						<td th:text="${game.firstPlayerScore} != 0 ? ${game.firstPlayerScore} : ''" />
-						<td th:text="${game.secondPlayerScore} != 0 ? ${game.secondPlayerScore} : ''"/>
+						<td th:text="${game.firstPlayerScore} != 0 ?
+							${game.firstPlayerScore} + ' (' + ${game.firstPlayerName} + ' ' + ${game.firstPlayerSurname} + ')'  : ''" />
+						<td th:text="${game.secondPlayerScore} != 0 ?
+							${game.secondPlayerScore} + ' (' + ${game.secondPlayerName} + ' ' + ${game.secondPlayerSurname} + ')'  : ''"/>
 
 						<td class="form-inline">
 							<div sec:authorize="hasAnyRole('ROLE_WORKER')">

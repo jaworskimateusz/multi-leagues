@@ -7,24 +7,24 @@ import java.util.Date;
 
 public class Game {
 
-    private int gameId;
-    private int roundId;
-    private int tournamentId;
-    private int firstPlayerScore;
-    private int secondPlayerScore;
-    private int firstPlayerId;
-    private int secondPlayerId;
+    protected int gameId;
+    protected int roundId;
+    protected int tournamentId;
+    protected int firstPlayerScore;
+    protected int secondPlayerScore;
+    protected int firstPlayerId;
+    protected int secondPlayerId;
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd h:mm")
-    private Date gameDate;
+    protected Date gameDate;
 
     @NotEmpty
     @Size(max = 45, message= "Maksymalna długość to 45 znaków.")
-    private  String place;
+    protected  String place;
 
-    private Boolean withoutPlayers = false;
-    private Boolean isTournament = false;
+    protected Boolean withoutPlayers = false;
+    protected Boolean isTournament = false;
 
     public Game() {
 
