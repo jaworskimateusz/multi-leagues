@@ -12,10 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.LeagueMapper;
-import pl.jaworskimateuszm.myleagues.mapper.PlayerMapper;
 import pl.jaworskimateuszm.myleagues.mapper.UserMapper;
 import pl.jaworskimateuszm.myleagues.model.League;
-import pl.jaworskimateuszm.myleagues.model.Player;
 import pl.jaworskimateuszm.myleagues.model.PlayerDetail;
 import pl.jaworskimateuszm.myleagues.model.User;
 

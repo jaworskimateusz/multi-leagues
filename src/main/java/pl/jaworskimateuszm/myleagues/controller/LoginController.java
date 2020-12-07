@@ -2,6 +2,7 @@ package pl.jaworskimateuszm.myleagues.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.UserMapper;
 import pl.jaworskimateuszm.myleagues.model.User;
 
@@ -23,10 +24,15 @@ public class LoginController {
 	}
 
 	@GetMapping("/home")
-	public String showHomePage(HttpServletRequest request, HttpSession session) {
+	public String showHomePage(HttpServletRequest request, HttpSession session, RedirectAttributes redirectAttributes) {
 		User user = userMapper.findByUsername(request.getRemoteUser());
 		session.setAttribute("user", user);
-		return "home";
+		return "redirect:/games/list";
+	}
+
+	@GetMapping("/index")
+	public String showIndex() {
+		return "index";
 	}
 	
 	@GetMapping("/access-denied")

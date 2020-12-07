@@ -13,7 +13,8 @@ public class GameWithPlayersView extends Game {
 
     }
 
-    public GameWithPlayersView(int roundId,
+    public GameWithPlayersView(int gameId,
+                               int roundId,
                                int firstPlayerScore,
                                int secondPlayerScore,
                                int firstPlayerId,
@@ -24,7 +25,7 @@ public class GameWithPlayersView extends Game {
                                String firstPlayerSurname,
                                String secondPlayerName,
                                String secondPlayerSurname) {
-        super(roundId, firstPlayerScore, secondPlayerScore, firstPlayerId, secondPlayerId, gameDate, place);
+        super(gameId, roundId, firstPlayerScore, secondPlayerScore, firstPlayerId, secondPlayerId, gameDate, place);
         this.firstPlayerName = firstPlayerName;
         this.firstPlayerSurname = firstPlayerSurname;
         this.secondPlayerName = secondPlayerName;

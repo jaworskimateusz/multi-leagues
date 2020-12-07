@@ -40,6 +40,11 @@ public class Game {
         this.place = place;
     }
 
+    public Game(int gameId, int roundId, int firstPlayerScore, int secondPlayerScore, int firstPlayerId, int secondPlayerId, Date gameDate, String place) {
+        this(roundId, firstPlayerScore, secondPlayerScore, firstPlayerId, secondPlayerId, gameDate, place);
+        this.gameId = gameId;
+    }
+
     public Boolean getTournament() {
         return isTournament;
     }

@@ -34,25 +34,7 @@ public class GameController {
 	@GetMapping("/list")
 	public String listGames(Model model) {
 		List<Game> games = gameMapper.findAll();
-		List<GameWithPlayersView> gamesWithPlayers = new ArrayList<>();
-		games.forEach(game -> {
-			int firstPlayerId = game.getFirstPlayerId();
-			int secondPlayerId = game.getSecondPlayerId();
-			gamesWithPlayers.add(new GameWithPlayersView(
-					game.getRoundId(),
-					game.getFirstPlayerScore(),
-					game.getSecondPlayerScore(),
-					game.getFirstPlayerId(),
-					game.getSecondPlayerId(),
-					game.getGameDate(),
-					game.getPlace(),
-					firstPlayerId != 0 ? userMapper.findById(firstPlayerId).getName() : "",
-					firstPlayerId != 0 ? userMapper.findById(firstPlayerId).getSurname(): "",
-					secondPlayerId != 0 ? userMapper.findById(secondPlayerId).getName(): "",
-					secondPlayerId != 0 ? userMapper.findById(secondPlayerId).getSurname(): ""
-			));
-		});
-		model.addAttribute("games", gamesWithPlayers);
+		model.addAttribute("games", getGameWithPlayers(games));
 		return "/games/list-games";
 	}
 	
@@ -123,7 +105,7 @@ public class GameController {
 		if (dateTo != null)
 			games = games.stream().filter(game -> game.getGameDate().before(dateTo)).collect(Collectors.toList());
 
-		model.addAttribute("games", games);
+		model.addAttribute("games", getGameWithPlayers(games));
 		return "/games/list-games";
 	}
 
@@ -215,6 +197,37 @@ public class GameController {
 		model.addAttribute("gameSets", gameSets);
 		model.addAttribute("readWrite", false);
 		return "/games/game-form";
+	}
+
+	private List<GameWithPlayersView> getGameWithPlayers(List<Game> games) {
+		List<GameWithPlayersView> gamesWithPlayers = new ArrayList<>();
+		games.forEach(game -> {
+			int firstPlayerId = game.getFirstPlayerId();
+			int secondPlayerId = game.getSecondPlayerId();
+			gamesWithPlayers.add(new GameWithPlayersView(
+					game.getGameId(),
+					game.getRoundId(),
+					game.getFirstPlayerScore(),
+					game.getSecondPlayerScore(),
+					game.getFirstPlayerId(),
+					game.getSecondPlayerId(),
+					game.getGameDate(),
+					game.getPlace(),
+					firstPlayerId != 0 ?
+							userMapper.findById(firstPlayerId) != null ? userMapper.findById(firstPlayerId).getName() : ""
+							: "",
+					firstPlayerId != 0 ?
+							userMapper.findById(firstPlayerId) != null ? userMapper.findById(firstPlayerId).getSurname() : ""
+									: "",
+					secondPlayerId != 0 ?
+							userMapper.findById(secondPlayerId) != null ? userMapper.findById(secondPlayerId).getName() : ""
+							: "",
+					secondPlayerId != 0 ?
+							userMapper.findById(secondPlayerId) != null ? userMapper.findById(secondPlayerId).getSurname() : ""
+							: ""
+			));
+		});
+		return gamesWithPlayers;
 	}
 
 }

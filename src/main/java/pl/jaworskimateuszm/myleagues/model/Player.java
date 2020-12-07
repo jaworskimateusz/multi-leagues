@@ -2,7 +2,6 @@ package pl.jaworskimateuszm.myleagues.model;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.beans.Transient;
 
 public class Player {
     private int playerId;

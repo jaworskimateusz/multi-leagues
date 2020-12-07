@@ -30,10 +30,10 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" th:href="@{leagues/disciplines}">Dyscypliny</a>
+				<a class="nav-link" th:href="@{/leagues/disciplines}">Dyscypliny</a>
 			</li>
 			<li class="nav-item" >
-				<a class="nav-link" th:href="@{leagues/list}">Ligi</a>
+				<a class="nav-link" th:href="@{/leagues/list}">Ligi</a>
 			</li>
 			<li class="nav-item" >
 				<a class="nav-link" th:href="@{/rounds/list}">Kolejki</a>
@@ -52,8 +52,8 @@
 						Edytuj
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-						<a class="dropdown-item" href="players/user-data">Dane użytkownika</a>
-						<a class="dropdown-item" href="players/login-data">Dane logowania</a>
+						<a class="dropdown-item" href="/players/user-data">Dane użytkownika</a>
+						<a class="dropdown-item" href="/players/login-data">Dane logowania</a>
 					</div>
 				</div>
 			</li>
@@ -84,7 +84,7 @@
 				<h3 class="mt-5 pt-4">Lista Meczy</h3>
 				<hr>
 				<form th:action="@{/games/search}" class="form-inline mb-3">
-					<a th:href="@{/games/add}"
+					<a th:href="@{/games/add}" sec:authorize="hasRole('ROLE_WORKER')"
 					   class="btn btn-outline-dark mr-5">
 						Dodaj Mecz
 					</a>
@@ -130,7 +130,7 @@
 						<th>Termin</th>
 						<th>Wynik pierwszego zawodnika</th>
 						<th>Wynik drugiego zawodnika</th>
-						<th>Akcja</th>
+						<th sec:authorize="hasRole('ROLE_WORKER')">Akcja</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -143,7 +143,7 @@
 						<td th:text="${game.secondPlayerScore} != 0 ?
 							${game.secondPlayerScore} + ' (' + ${game.secondPlayerName} + ' ' + ${game.secondPlayerSurname} + ')'  : ''"/>
 
-						<td class="form-inline">
+						<td sec:authorize="hasRole('ROLE_WORKER')" class="form-inline">
 							<div sec:authorize="hasAnyRole('ROLE_WORKER')">
 								<a th:href="@{/games/update(gameId=${game.gameId})}"
 								   class="btn btn-outline-secondary btn-sm">

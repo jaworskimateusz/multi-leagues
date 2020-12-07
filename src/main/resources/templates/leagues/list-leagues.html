@@ -3,7 +3,7 @@
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-	<title>Kolejki</title>
+	<title>Ligi</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -29,10 +29,10 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" th:href="@{leagues/disciplines}">Dyscypliny</a>
+				<a class="nav-link" th:href="@{/leagues/disciplines}">Dyscypliny</a>
 			</li>
 			<li class="nav-item" >
-				<a class="nav-link" th:href="@{leagues/list}">Ligi</a>
+				<a class="nav-link" th:href="@{/leagues/list}">Ligi</a>
 			</li>
 			<li class="nav-item" >
 				<a class="nav-link" th:href="@{/rounds/list}">Kolejki</a>
@@ -51,8 +51,8 @@
 						Edytuj
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-						<a class="dropdown-item" href="players/user-data">Dane użytkownika</a>
-						<a class="dropdown-item" href="players/login-data">Dane logowania</a>
+						<a class="dropdown-item" href="/players/user-data">Dane użytkownika</a>
+						<a class="dropdown-item" href="/players/login-data">Dane logowania</a>
 					</div>
 				</div>
 			</li>
@@ -90,7 +90,7 @@
 					<input type="hidden" name="confirm" th:value="${confirm != null} ? ${confirm} : -1">
 					<input type="hidden" name="playerId" th:value="${playerId != null} ? ${playerId} : -1">
 					<input class="form-control ml-5 mr-sm-2 nav navbar-nav navbar-right pl-2 col row justify-content-end"
-							    type="text" name="level" min="0" placeholder=" Szukaj po opisie" />
+							    type="text" name="level" min="0" placeholder=" Szukaj po poziomie" />
 					<button class="btn btn-dark pl-2" style="position:absolute; right: 15px" type="submit">Wyszukaj</button>
 				</form>
 				<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">

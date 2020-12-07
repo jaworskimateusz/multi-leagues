@@ -116,6 +116,7 @@ public interface UserMapper {
     int insertPlayerLeague(long userId, long leagueId);
 
     @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
+            " FROM users" +
             " WHERE pesel = #{pesel}")
     @Results({
             @Result(property = "userId", column = "user_id"),
@@ -151,6 +152,8 @@ public interface UserMapper {
 
     @Delete("DELETE FROM zawodnicy_ligi WHERE user_id = #{id}")
     int deletePlayerLeagueById(long id);
+
+    @Select("SELECT id_meczu FROM mecze WHERE id")
 
     @Insert("INSERT INTO authorities (username, authority)" +
             " VALUES (#{username}, #{authority})")

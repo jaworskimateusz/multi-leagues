@@ -29,10 +29,10 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" th:href="@{leagues/disciplines}">Dyscypliny</a>
+				<a class="nav-link" th:href="@{/leagues/disciplines}">Dyscypliny</a>
 			</li>
 			<li class="nav-item" >
-				<a class="nav-link" th:href="@{leagues/list}">Ligi</a>
+				<a class="nav-link" th:href="@{/leagues/list}">Ligi</a>
 			</li>
 			<li class="nav-item" >
 				<a class="nav-link" th:href="@{/rounds/list}">Kolejki</a>
@@ -51,8 +51,8 @@
 						Edytuj
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-						<a class="dropdown-item" href="players/user-data">Dane użytkownika</a>
-						<a class="dropdown-item" href="players/login-data">Dane logowania</a>
+						<a class="dropdown-item" href="/players/user-data">Dane użytkownika</a>
+						<a class="dropdown-item" href="/players/login-data">Dane logowania</a>
 					</div>
 				</div>
 			</li>
@@ -83,7 +83,7 @@
 				<h3 class="mt-5 pt-4">Lista Kolejek</h3>
 				<hr>
 				<form th:action="@{/rounds/search}" class="form-inline mb-3">
-					<a th:if="${confirm != 1}" th:href="@{/rounds/add}"
+					<a th:if="${confirm != 1}" th:href="@{/rounds/add}" sec:authorize="hasRole('ROLE_WORKER')"
 					   class="btn btn-outline-dark mr-5">
 						Dodaj Kolejkę
 					</a>
@@ -126,7 +126,7 @@
 								</a>
 							</div>
 						</td>
-						<td th:if="${confirm == 1}" class="form-inline">
+						<td th:if="${confirm == 1}" class="form-inline" >
 							<div sec:authorize="hasRole('ROLE_WORKER')">
 								<a th:if="${round.confirmed == 0}" th:href="@{/rounds/confirm-payment(roundId=${round.roundId}, playerId=${playerId})}"
 								   class="btn btn-outline-secondary btn-sm ml-1"

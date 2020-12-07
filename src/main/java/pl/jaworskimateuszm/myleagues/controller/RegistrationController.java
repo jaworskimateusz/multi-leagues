@@ -11,13 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.UserMapper;
 import pl.jaworskimateuszm.myleagues.model.NewUser;
-import pl.jaworskimateuszm.myleagues.model.Player;
 import pl.jaworskimateuszm.myleagues.model.User;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Arrays;
 
 @Controller
 public class RegistrationController {

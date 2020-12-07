@@ -169,7 +169,7 @@ ENGINE = InnoDB;
 -- Table `moje_ligi`.`sety`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`sety` (
-  `id_setu` INT NOT NULL,
+  `id_setu` INT NOT NULL AUTO_INCREMENT,
   `numer` INT NOT NULL,
   `punkty_pierwszego` INT NULL,
   `punkty_drugiego` VARCHAR(45) NULL,
