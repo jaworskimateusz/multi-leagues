@@ -54,20 +54,6 @@ public interface UserMapper {
     })
     User findById(long id);
 
-    @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
-            " FROM users")
-    @Results({
-            @Result(property = "userId", column = "user_id"),
-            @Result(property = "username", column = "username"),
-            @Result(property = "password", column = "password"),
-            @Result(property = "enabled", column = "enabled"),
-            @Result(property = "role", column = "role"),
-            @Result(property = "name", column = "imie"),
-            @Result(property = "surname", column = "nazwisko"),
-            @Result(property = "pesel", column = "pesel"),
-            @Result(property = "phoneNumber", column = "numer_telefonu")
-    })
-    List<User> findAll();
 
     @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
             " FROM users WHERE role=#{role}")
@@ -106,13 +92,13 @@ public interface UserMapper {
     @Delete("DELETE FROM authorities WHERE username = #{username}")
     int deleteByUsernameFromAuthorities(String username);
 
-    @Update("UPDATE zawodnicy_ligi SET user_id=#{userId}, id_ligi=#{leagueId} " +
-            "WHERE user_id=#{userId} AND id_ligi=#{leagueId}")
-    int updatePlayerLeague(long userId, long leagueId);
+//    @Update("UPDATE zawodnicy_ligi SET user_id=#{userId}, id_ligi=#{leagueId} " +
+//            "WHERE user_id=#{userId} AND id_ligi=#{leagueId}")
+//    int updatePlayerLeague(long userId, long leagueId);
 
-    @Insert("INSERT INTO zawodnicy_ligi (user_id, id_ligi) " +
-            " VALUES (#{userId}, #{leagueId})")
-    int insertPlayerLeague(long userId, long leagueId);
+//    @Insert("INSERT INTO zawodnicy_ligi (user_id, id_ligi) " +
+//            " VALUES (#{userId}, #{leagueId})")
+//    int insertPlayerLeague(long userId, long leagueId);
 
     @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
             " FROM users" +

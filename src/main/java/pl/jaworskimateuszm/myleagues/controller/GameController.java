@@ -37,18 +37,6 @@ public class GameController {
 		model.addAttribute("games", getGameWithPlayers(games));
 		return "/games/list-games";
 	}
-	
-	@GetMapping("/add")
-	public String showGameForm(Model model) {
-		List<Round> rounds = roundMapper.findAll();
-		gameMapper.insert(new Game(rounds.stream().findFirst().get().getRoundId(),0,0,0,0, new Date(), "-"));
-		int id = gameMapper.findMaxGameId();
-		Game game = gameMapper.findById(id);
-		model.addAttribute("game", game);
-		model.addAttribute("rounds",rounds);
-		model.addAttribute("readWrite", true);
-		return "/games/game-form";
-	}
 
 	@GetMapping("/update")
 	public String updateGame(@RequestParam("gameId") int id, Model model) {
@@ -65,27 +53,6 @@ public class GameController {
 		model.addAttribute("gameSets", gameSets);
 		model.addAttribute("readWrite", true);
 		return "/games/game-form";
-	}
-	
-	@PostMapping("/save")
-	public String saveGame(@Valid @ModelAttribute("game") Game game, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-		if (bindingResult.hasErrors() || game.getRoundId() == -1) {
-			redirectAttributes.addFlashAttribute("error", true);
-			return "redirect:/games/add";
-		}
-		Game found = gameMapper.findById(game.getGameId());
-		if (found != null)
-			gameMapper.update(game);
-		else
-			gameMapper.insert(game);
-
-		return "redirect:/games/list";
-	}
-	
-	@GetMapping("/delete")
-	public String deleteGame(@RequestParam("gameId") int id) {
-		gameMapper.deleteById(id);
-		return "redirect:/games/list";
 	}
 
 	@GetMapping("/search")
@@ -109,50 +76,6 @@ public class GameController {
 		return "/games/list-games";
 	}
 
-	@GetMapping("/add-first-player-to-game")
-	public String addFirstPlayerToGame(@RequestParam("playerId") int playerId,
-									   @RequestParam("gameId") int gameId,
-									   RedirectAttributes redirectAttributes) {
-		gameMapper.updateFirstPlayerId(playerId, gameId);
-		redirectAttributes.addAttribute("gameId", gameId);
-		return "redirect:/games/update";
-	}
-
-	@GetMapping("/add-second-player-to-game")
-	public String addSecondPlayerToGame(@RequestParam("playerId") int playerId,
-										@RequestParam("gameId") int gameId,
-										RedirectAttributes redirectAttributes) {
-		gameMapper.updateSecondPlayerId(playerId, gameId);
-		redirectAttributes.addAttribute("gameId", gameId);
-		return "redirect:/games/update";
-	}
-
-	@GetMapping("/delete-first-player-from-game")
-	public String deleteFirstPlayerFromGame(@RequestParam("playerId") int playerId,
-											@RequestParam("gameId") int gameId,
-											RedirectAttributes redirectAttributes) {
-		gameMapper.updateFirstPlayerId(0, gameId);
-		redirectAttributes.addAttribute("gameId", gameId);
-		return "redirect:/games/update";
-	}
-
-	@GetMapping("/delete-second-player-from-game")
-	public String deleteSecondPlayerFromGame(@RequestParam("playerId") int playerId,
-											 @RequestParam("gameId") int gameId,
-											 RedirectAttributes redirectAttributes) {
-		gameMapper.updateSecondPlayerId(0, gameId);
-		redirectAttributes.addAttribute("gameId", gameId);
-		return "redirect:/games/update";
-	}
-
-	@GetMapping("/add-set")
-	public String showSetForm(@RequestParam("gameId") int gameId, Model model) {
-		GameSet gameSet = new GameSet();
-		gameSet.setGameId(gameId);
-		model.addAttribute("gameSet", gameSet);
-		return "/games/set-form";
-	}
-
 	@GetMapping("/update-set")
 	public String updateSet(@RequestParam("gameId") int gameId, @RequestParam("gameSetId") int gameSetId, Model model) {
 		GameSet gameSet = setMapper.findById(gameSetId);
@@ -162,25 +85,6 @@ public class GameController {
 		return "/games/set-form";
 	}
 
-	@PostMapping("/save-set")
-	public String saveSet(@ModelAttribute("gameSet") GameSet gameSet, RedirectAttributes redirectAttributes) {
-		if (setMapper.findById(gameSet.getGameSetId()) != null) {
-			setMapper.update(gameSet);
-		} else {
-			setMapper.insert(gameSet);
-		}
-		redirectAttributes.addAttribute("gameId", gameSet.getGameId());
-		return "redirect:/games/update";
-	}
-
-	@GetMapping("/delete-set")
-	public String deleteSet(@RequestParam("gameId") int gameId,
-							@RequestParam("gameSetId") int gameSetId,
-							RedirectAttributes redirectAttributes) {
-		setMapper.deleteById(gameSetId);
-		redirectAttributes.addAttribute("gameId", gameId);
-		return "redirect:/games/update";
-	}
 
 	@GetMapping("/detail")
 	public String showGameDetail(@RequestParam("gameId") int id, Model model) {

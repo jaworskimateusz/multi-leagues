@@ -30,17 +30,4 @@ public interface SetMapper {
     })
     GameSet findById(int id);
 
-    @Delete("DELETE FROM sety WHERE id_setu = #{id}")
-    int deleteById(int id);
-
-    @Insert("INSERT INTO sety (id_meczu, numer, punkty_pierwszego, punkty_drugiego) " +
-            "VALUES (#{gameId}, #{number}, #{firstPlayerScore}, #{secondPlayerScore}) ")
-    @Options(useGeneratedKeys = true, keyProperty = "gameSetId")
-    int insert(GameSet gameSet);
-
-    @Update("UPDATE sety SET id_meczu=#{gameId} numer=#{number}, punkty_pierwszego#{firstPlayerScore}, " +
-            "punkty_drugiego=#{secondPlayerScore} WHERE id_setu=#{gameSetId}")
-    int update(GameSet gameSet);
-
-
 }

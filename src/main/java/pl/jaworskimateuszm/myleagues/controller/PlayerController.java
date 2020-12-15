@@ -42,23 +42,6 @@ public class PlayerController {
 		model.addAttribute("players", players);
 		return "/players/list-players";
 	}
-	
-	@GetMapping("/add")
-	public String addPlayer(Model model) {
-		model.addAttribute("player", new User());
-		List<League> leagues = leagueMapper.findAll();
-		model.addAttribute("leagues", leagues);
-		return "/players/player-form";
-	}
-
-	@GetMapping("/update")
-	public String updatePlayer(@RequestParam("playerId") int id, Model model) {
-		User player = userMapper.findById(id);
-		List<League> leagues = leagueMapper.findAll();
-		model.addAttribute("leagues", leagues);
-		model.addAttribute("player", player);
-		return "/players/player-form";
-	}
 
 	@GetMapping("/detail")
 	public String getPlayerDetails(@RequestParam("playerId") int id, Model model) {
@@ -68,24 +51,7 @@ public class PlayerController {
 		model.addAttribute("details", details);
 		return "/players/player-detail";
 	}
-	
-	@PostMapping("/save")
-	public String savePlayer(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-		if (bindingResult.hasErrors()) {
-			redirectAttributes.addFlashAttribute("error", true);
-			return "redirect:/players/add";
-		}
-		if (userMapper.findById(player.getUserId()) != null) {
-			userMapper.update(player);
-			Arrays.stream(player.getLeagueIds()).forEach(leagueId -> userMapper.updatePlayerLeague(player.getUserId(), leagueId));
-		} else {
-			userMapper.insert(player);
-			Arrays.stream(player.getLeagueIds()).forEach(leagueId -> userMapper.insertPlayerLeague(player.getUserId(), leagueId));
-		}
 
-		return "redirect:/players/list";
-	}
-	
 	@GetMapping("/delete")
 	public String deletePlayer(@RequestParam("playerId") int playerId) {
 		userMapper.deletePlayerLeagueById(playerId);
@@ -106,14 +72,14 @@ public class PlayerController {
 		return "/players/list-players";
 	}
 
-	@GetMapping("/choose-player")
-	public String choosePlayer(@RequestParam("gameId") int gameId, @RequestParam("whichOne") String whichOne, Model model) {
-		List<User> players = userMapper.findAllByRole("PLAYER");
-		model.addAttribute("gameId", gameId);
-		model.addAttribute("players", players);
-		model.addAttribute("whichOne", whichOne);
-		return "/players/list-players";
-	}
+//	@GetMapping("/choose-player")
+//	public String choosePlayer(@RequestParam("gameId") int gameId, @RequestParam("whichOne") String whichOne, Model model) {
+//		List<User> players = userMapper.findAllByRole("PLAYER");
+//		model.addAttribute("gameId", gameId);
+//		model.addAttribute("players", players);
+//		model.addAttribute("whichOne", whichOne);
+//		return "/players/list-players";
+//	}
 
 	@GetMapping("/user-data")
 	public String updateUserData(HttpServletRequest request, Model model) {

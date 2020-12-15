@@ -30,47 +30,6 @@ public class RoundController {
 		model.addAttribute("rounds", rounds);
 		return "/rounds/list-rounds";
 	}
-	
-	@GetMapping("/add")
-	public String showRoundForm(Model model) {
-		model.addAttribute("round", new Round());
-		List<Season> seasons = roundMapper.findAllSeasons();
-		model.addAttribute("seasons", seasons);
-		return "/rounds/round-form";
-	}
-
-	@GetMapping("/update")
-	public String updateRound(@RequestParam("roundId") int id, Model model) {
-		Round round = roundMapper.findById(id);
-		List<Season> seasons = roundMapper.findAllSeasons();
-		model.addAttribute("round", round);
-		model.addAttribute("seasons", seasons);
-		return "/rounds/round-form";
-	}
-	
-	@PostMapping("/save")
-	public String saveRound(@Valid @ModelAttribute("round") Round round, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-		if (bindingResult.hasErrors()) {
-			redirectAttributes.addFlashAttribute("error", true);
-			return "redirect:/rounds/add";
-		}
-		if (roundMapper.findById(round.getRoundId()) != null) {
-			roundMapper.update(round);
-		} else {
-			roundMapper.insert(round);
-		}
-		roundMapper.insertFee(new Date()); //type 0 means for rounds
-		int feeId = roundMapper.findLastFeeId();
-		roundMapper.insertRoundFee(round.getRoundId(), feeId);
-		return "redirect:/rounds/list";
-	}
-	
-	@GetMapping("/delete")
-	public String deleteRound(@RequestParam("roundId") int id) {
-		roundMapper.deleteRoundFeeById(id);
-		roundMapper.deleteById(id);
-		return "redirect:/rounds/list";
-	}
 
 	@GetMapping("/search")
 	public String searchRound(@RequestParam("number") String num,
@@ -90,42 +49,4 @@ public class RoundController {
 
 		return "/rounds/list-rounds";
 	}
-
-	@GetMapping("/manage-rounds")
-	public String manageRoundPayment(@RequestParam("playerId") int id, Model model) {
-		List<Round> rounds = roundMapper.findAllByPlayerId(id);
-		model.addAttribute("rounds", rounds);
-		model.addAttribute("playerId", id);
-		model.addAttribute("confirm", 1);
-		return "/rounds/list-rounds";
-	}
-
-	@GetMapping("/confirm-payment")
-	public String confirmRoundPayment(@RequestParam("roundId") int roundId,
-								 @RequestParam("playerId") int playerId,
-								 RedirectAttributes redirectAttributes) {
-		List<Round> rounds = roundMapper.findAllByPlayerId(playerId);
-		for (Round round : rounds) {
-			if (round.getRoundId() == roundId) {
-				roundMapper.confirmRoundFee(round.getFeeId());
-			}
-		}
-		redirectAttributes.addAttribute("playerId", playerId);
-		return "redirect:/rounds/manage-rounds";
-	}
-
-	@GetMapping("/cancel-payment")
-	public String cancelRoundPayment(@RequestParam("roundId") int roundId,
-								@RequestParam("playerId") int playerId,
-								RedirectAttributes redirectAttributes) {
-		List<Round> rounds = roundMapper.findAllByPlayerId(playerId);
-		for (Round round : rounds) {
-			if (round.getRoundId() == roundId) {
-				roundMapper.cancelRoundFee(round.getFeeId());
-			}
-		}
-		redirectAttributes.addAttribute("playerId", playerId);
-		return "redirect:/rounds/manage-rounds";
-	}
-
 }
