@@ -7,7 +7,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.RoundMapper;
-import pl.jaworskimateuszm.myleagues.mapper.SeasonMapper;
 import pl.jaworskimateuszm.myleagues.model.Round;
 import pl.jaworskimateuszm.myleagues.model.Season;
 import pl.jaworskimateuszm.myleagues.utils.Parser;
@@ -20,39 +19,37 @@ import java.util.Date;
 public class RoundController {
 
 	private RoundMapper roundMapper;
-	private SeasonMapper seasonMapper;
 
-	public RoundController(RoundMapper roundMapper, SeasonMapper seasonMapper) {
+	public RoundController(RoundMapper roundMapper) {
 		this.roundMapper = roundMapper;
-		this.seasonMapper = seasonMapper;
 	}
 
 	@GetMapping("/list")
-	public String listRounds(Model model) {
+	public String getRounds(Model model) {
 		List<Round> rounds = roundMapper.findAll();
 		model.addAttribute("rounds", rounds);
 		return "/rounds/list-rounds";
 	}
 	
 	@GetMapping("/add")
-	public String add(Model model) {
+	public String showRoundForm(Model model) {
 		model.addAttribute("round", new Round());
-		List<Season> seasons = seasonMapper.findAll();
+		List<Season> seasons = roundMapper.findAllSeasons();
 		model.addAttribute("seasons", seasons);
 		return "/rounds/round-form";
 	}
 
 	@GetMapping("/update")
-	public String update(@RequestParam("roundId") int id, Model model) {
+	public String updateRound(@RequestParam("roundId") int id, Model model) {
 		Round round = roundMapper.findById(id);
-		List<Season> seasons = seasonMapper.findAll();
+		List<Season> seasons = roundMapper.findAllSeasons();
 		model.addAttribute("round", round);
 		model.addAttribute("seasons", seasons);
 		return "/rounds/round-form";
 	}
 	
 	@PostMapping("/save")
-	public String save(@Valid @ModelAttribute("round") Round round, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	public String saveRound(@Valid @ModelAttribute("round") Round round, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			redirectAttributes.addFlashAttribute("error", true);
 			return "redirect:/rounds/add";
@@ -69,14 +66,14 @@ public class RoundController {
 	}
 	
 	@GetMapping("/delete")
-	public String delete(@RequestParam("roundId") int id) {
+	public String deleteRound(@RequestParam("roundId") int id) {
 		roundMapper.deleteRoundFeeById(id);
 		roundMapper.deleteById(id);
 		return "redirect:/rounds/list";
 	}
 
 	@GetMapping("/search")
-	public String search(@RequestParam("number") String num,
+	public String searchRound(@RequestParam("number") String num,
 						 @RequestParam("confirm") int confirm,
 						 @RequestParam("playerId") int playerId,
 						 Model model,
@@ -104,7 +101,7 @@ public class RoundController {
 	}
 
 	@GetMapping("/confirm-payment")
-	public String confirmPayment(@RequestParam("roundId") int roundId,
+	public String confirmRoundPayment(@RequestParam("roundId") int roundId,
 								 @RequestParam("playerId") int playerId,
 								 RedirectAttributes redirectAttributes) {
 		List<Round> rounds = roundMapper.findAllByPlayerId(playerId);
@@ -118,7 +115,7 @@ public class RoundController {
 	}
 
 	@GetMapping("/cancel-payment")
-	public String cancelPayment(@RequestParam("roundId") int roundId,
+	public String cancelRoundPayment(@RequestParam("roundId") int roundId,
 								@RequestParam("playerId") int playerId,
 								RedirectAttributes redirectAttributes) {
 		List<Round> rounds = roundMapper.findAllByPlayerId(playerId);

@@ -187,10 +187,10 @@
 							</svg>
 						</div>
 					</div>
-					<h5>Wybierz kolejkę lub turniej
-						(* <input th:if="${readWrite}" class="mt-1" type="checkbox" /> )
+					<h5 th:if="${readWrite}">Wybierz kolejkę lub turniej
+						(* <input  class="mt-1" type="checkbox" /> )
 					</h5>
-
+					<h5 th:if="${!readWrite}">Kolejka</h5>
 					<div class="row mt-2 justify-content-around">
 						<select class="form-control selectpicker col-4 mb-4" th:field="*{roundId}">
 							<option th:if="${readWrite}" th:value="-1">--kolejka--</option>
@@ -199,7 +199,7 @@
 									th:utext="${round.discipline} + ', numer: ' + ${round.number}"/>
 						</select>
 						<!--					Wybieram turniej: <input th:if="${readWrite}" type="checkbox" name="isTournament" th:checked="*{isTournament} ? true: false" />&ndash;&gt;-->
-						<select class="form-control selectpicker col-4 mb-4" th:field="*{tournamentId}">
+						<select th:if="${readWrite}" class="form-control selectpicker col-4 mb-4" th:field="*{tournamentId}">
 							<option th:if="${readWrite}" th:value="-1">--*turniej--</option>
 							<option th:each="tournament : ${tournaments}"
 									th:value="${tournament.torunamentId}"

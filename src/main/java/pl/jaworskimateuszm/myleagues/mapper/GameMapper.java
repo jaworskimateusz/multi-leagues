@@ -50,7 +50,7 @@ public interface GameMapper {
             @Result(property = "firstPlayerId", column = "id_pierwszego_zawodnika"),
             @Result(property = "secondPlayerId", column = "id_drugiego_zawodnika")
     })
-    Game findById(int id);
+    Game findById(int gameId);
 
     @Delete("DELETE FROM mecze WHERE id_meczu = #{id}")
     int deleteById(int id);

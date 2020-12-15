@@ -2,6 +2,7 @@ package pl.jaworskimateuszm.myleagues.mapper;
 
 import org.apache.ibatis.annotations.*;
 import pl.jaworskimateuszm.myleagues.model.Round;
+import pl.jaworskimateuszm.myleagues.model.Season;
 
 import java.util.Date;
 import java.util.List;
@@ -85,5 +86,14 @@ public interface RoundMapper {
 
     @Select("SELECT MAX(id_wpisowe) FROM wpisowe")
     int findLastFeeId();
+
+    @Select("SELECT id_sezonu, id_ligi, numer, opis FROM sezony")
+    @Results({
+            @Result(property = "seasonId", column = "id_sezonu"),
+            @Result(property = "leagueId", column = "id_ligi"),
+            @Result(property = "number", column = "numer"),
+            @Result(property = "description", column = "opis")
+    })
+    List<Season> findAllSeasons();
 
 }

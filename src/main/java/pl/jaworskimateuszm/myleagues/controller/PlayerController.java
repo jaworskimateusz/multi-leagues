@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.LeagueMapper;
 import pl.jaworskimateuszm.myleagues.mapper.UserMapper;
 import pl.jaworskimateuszm.myleagues.model.League;
+import pl.jaworskimateuszm.myleagues.model.NewUser;
 import pl.jaworskimateuszm.myleagues.model.PlayerDetail;
 import pl.jaworskimateuszm.myleagues.model.User;
 
@@ -36,14 +37,14 @@ public class PlayerController {
 	}
 
 	@GetMapping("/list")
-	public String listPlayers(Model model) {
+	public String getPlayers(Model model) {
 		List<User> players = userMapper.findAllByRole("PLAYER");
 		model.addAttribute("players", players);
 		return "/players/list-players";
 	}
 	
 	@GetMapping("/add")
-	public String add(Model model) {
+	public String addPlayer(Model model) {
 		model.addAttribute("player", new User());
 		List<League> leagues = leagueMapper.findAll();
 		model.addAttribute("leagues", leagues);
@@ -51,7 +52,7 @@ public class PlayerController {
 	}
 
 	@GetMapping("/update")
-	public String update(@RequestParam("playerId") int id, Model model) {
+	public String updatePlayer(@RequestParam("playerId") int id, Model model) {
 		User player = userMapper.findById(id);
 		List<League> leagues = leagueMapper.findAll();
 		model.addAttribute("leagues", leagues);
@@ -60,7 +61,7 @@ public class PlayerController {
 	}
 
 	@GetMapping("/detail")
-	public String detail(@RequestParam("playerId") int id, Model model) {
+	public String getPlayerDetails(@RequestParam("playerId") int id, Model model) {
 		User player = userMapper.findById(id);
 		List<PlayerDetail> details = userMapper.findAllDetailById(id);
 		model.addAttribute("player", player);
@@ -69,7 +70,7 @@ public class PlayerController {
 	}
 	
 	@PostMapping("/save")
-	public String save(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	public String savePlayer(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			redirectAttributes.addFlashAttribute("error", true);
 			return "redirect:/players/add";
@@ -86,15 +87,15 @@ public class PlayerController {
 	}
 	
 	@GetMapping("/delete")
-	public String delete(@RequestParam("playerId") int playerId) {
+	public String deletePlayer(@RequestParam("playerId") int playerId) {
 		userMapper.deletePlayerLeagueById(playerId);
-		userMapper.deleteByIdFromAuthorities(userMapper.findById(playerId).getUsername());
+		userMapper.deleteByUsernameFromAuthorities(userMapper.findById(playerId).getUsername());
 		userMapper.deleteById(playerId);
 		return "redirect:/login";
 	}
 	
 	@GetMapping("/search")
-	public String search(@RequestParam("pesel") String pesel,
+	public String searchPlayer(@RequestParam("pesel") String pesel,
 						 @RequestParam("gameId") int gameId,
 						 @RequestParam("whichOne") String whichOne,
 						 Model model) {
@@ -134,15 +135,26 @@ public class PlayerController {
 	@GetMapping("/login-data")
 	public String updateLoginData(HttpServletRequest request, Model model) {
 		User player = userMapper.findByUsername(request.getRemoteUser());
-		model.addAttribute("player", player);
+		NewUser user = new NewUser(
+				player.getUserId(),
+				player.getUsername(),
+				player.getPassword(),
+				player.getEnabled(),
+				player.getRole(),
+				player.getName(),
+				player.getSurname(),
+				player.getPesel(),
+				player.getPhoneNumber()
+		);
+		model.addAttribute("player", user);
 		return "/users/user-form-login-data";
 	}
 
 	@PostMapping("/save-login-data")
-	public String saveLoginData(@Valid @ModelAttribute("player") User player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	public String saveLoginData(@Valid @ModelAttribute("player") NewUser player, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors() ||
 			!BCrypt.checkpw(player.getActualPassword(), player.getPassword()) ||
-			!player.getNewPassword().equals(player.getRepeatNewPassword())
+			!player.getNewPassword().equals(player.getRepeatedNewPassword())
 		) {
 			redirectAttributes.addFlashAttribute("error", true);
 			return "redirect:/players/login-data";

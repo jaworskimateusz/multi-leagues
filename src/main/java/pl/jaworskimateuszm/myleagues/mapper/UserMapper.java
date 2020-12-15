@@ -13,7 +13,6 @@ public interface UserMapper {
             "VALUES (#{username}, #{password}, #{enabled}, #{role}, #{name}, #{surname}, #{pesel}, #{phoneNumber})")
     @Options(useGeneratedKeys = true, keyProperty = "userId")
     @Results({
-            @Result(property = "userId", column = "user_id"),
             @Result(property = "username", column = "username"),
             @Result(property = "password", column = "password"),
             @Result(property = "enabled", column = "enabled"),
@@ -105,7 +104,7 @@ public interface UserMapper {
     int deleteById(int id);
 
     @Delete("DELETE FROM authorities WHERE username = #{username}")
-    int deleteByIdFromAuthorities(String username);
+    int deleteByUsernameFromAuthorities(String username);
 
     @Update("UPDATE zawodnicy_ligi SET user_id=#{userId}, id_ligi=#{leagueId} " +
             "WHERE user_id=#{userId} AND id_ligi=#{leagueId}")
@@ -153,10 +152,7 @@ public interface UserMapper {
     @Delete("DELETE FROM zawodnicy_ligi WHERE user_id = #{id}")
     int deletePlayerLeagueById(long id);
 
-    @Select("SELECT id_meczu FROM mecze WHERE id")
-
-    @Insert("INSERT INTO authorities (username, authority)" +
-            " VALUES (#{username}, #{authority})")
+    @Insert("INSERT INTO authorities VALUES (#{username}, #{authority})")
     void insertAuthority(String username, String authority);
 
 }

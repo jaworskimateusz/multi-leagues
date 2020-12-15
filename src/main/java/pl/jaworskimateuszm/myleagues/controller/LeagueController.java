@@ -3,7 +3,6 @@ package pl.jaworskimateuszm.myleagues.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.jaworskimateuszm.myleagues.mapper.DisciplineMapper;
 import pl.jaworskimateuszm.myleagues.mapper.LeagueMapper;
 import pl.jaworskimateuszm.myleagues.model.*;
 
@@ -14,29 +13,27 @@ import java.util.List;
 public class LeagueController {
 
 	private LeagueMapper leagueMapper;
-	private DisciplineMapper disciplineMapper;
 
-	public LeagueController(LeagueMapper leagueMapper, DisciplineMapper disciplineMapper) {
+	public LeagueController(LeagueMapper leagueMapper) {
 		this.leagueMapper = leagueMapper;
-		this.disciplineMapper = disciplineMapper;
 	}
 
 	@GetMapping("/list")
-	public String listLeagues(Model model) {
+	public String getLeagues(Model model) {
 		List<League> leagues = leagueMapper.findAll();
 		model.addAttribute("leagues", leagues);
 		return "/leagues/list-leagues";
 	}
 
 	@GetMapping("/disciplines")
-	public String listDisciplines(Model model) {
-		List<Discipline> disciplines = disciplineMapper.findAll();
+	public String getDisciplines(Model model) {
+		List<Discipline> disciplines = leagueMapper.findAllDisciplines();
 		model.addAttribute("disciplines", disciplines);
 		return "/leagues/list-disciplines";
 	}
 
 	@GetMapping("/search")
-	public String search(@RequestParam("level") String level,
+	public String searchLeague(@RequestParam("level") String level,
 						 @RequestParam("confirm") int confirm,
 						 @RequestParam("playerId") int playerId,
 						 Model model) {

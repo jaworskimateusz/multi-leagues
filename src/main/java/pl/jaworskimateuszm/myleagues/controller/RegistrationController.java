@@ -37,7 +37,7 @@ public class RegistrationController {
 	public String save(@Valid @ModelAttribute("user") NewUser newUser, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors() ||
 			userMapper.findByUsername(newUser.getUsername()) != null ||
-			!newUser.getPassword().equals(newUser.getRepeatedPassword())
+			!newUser.getPassword().equals(newUser.getRepeatedNewPassword())
 		) {
 			redirectAttributes.addFlashAttribute("error", true);
 			return "redirect:/register";

@@ -32,14 +32,14 @@ public class GameController {
 	}
 
 	@GetMapping("/list")
-	public String listGames(Model model) {
+	public String getGames(Model model) {
 		List<Game> games = gameMapper.findAll();
 		model.addAttribute("games", getGameWithPlayers(games));
 		return "/games/list-games";
 	}
 	
 	@GetMapping("/add")
-	public String add(Model model) {
+	public String showGameForm(Model model) {
 		List<Round> rounds = roundMapper.findAll();
 		gameMapper.insert(new Game(rounds.stream().findFirst().get().getRoundId(),0,0,0,0, new Date(), "-"));
 		int id = gameMapper.findMaxGameId();
@@ -51,7 +51,7 @@ public class GameController {
 	}
 
 	@GetMapping("/update")
-	public String update(@RequestParam("gameId") int id, Model model) {
+	public String updateGame(@RequestParam("gameId") int id, Model model) {
 		Game game = gameMapper.findById(id);
 		List<Round> rounds = roundMapper.findAll();
 		List<GameSet> gameSets = setMapper.findAllByGameId(id);
@@ -68,8 +68,8 @@ public class GameController {
 	}
 	
 	@PostMapping("/save")
-	public String save(@Valid @ModelAttribute("game") Game game, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-		if (bindingResult.hasErrors()) {
+	public String saveGame(@Valid @ModelAttribute("game") Game game, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors() || game.getRoundId() == -1) {
 			redirectAttributes.addFlashAttribute("error", true);
 			return "redirect:/games/add";
 		}
@@ -83,13 +83,13 @@ public class GameController {
 	}
 	
 	@GetMapping("/delete")
-	public String delete(@RequestParam("gameId") int id) {
+	public String deleteGame(@RequestParam("gameId") int id) {
 		gameMapper.deleteById(id);
 		return "redirect:/games/list";
 	}
 
 	@GetMapping("/search")
-	public String search(@RequestParam("place") String place,
+	public String searchGame(@RequestParam("place") String place,
 						 @RequestParam("dateFrom") String dateFromText,
 						 @RequestParam("dateTo") String dateToText,
 						 Model model) {
@@ -146,7 +146,7 @@ public class GameController {
 	}
 
 	@GetMapping("/add-set")
-	public String add(@RequestParam("gameId") int gameId, Model model) {
+	public String showSetForm(@RequestParam("gameId") int gameId, Model model) {
 		GameSet gameSet = new GameSet();
 		gameSet.setGameId(gameId);
 		model.addAttribute("gameSet", gameSet);

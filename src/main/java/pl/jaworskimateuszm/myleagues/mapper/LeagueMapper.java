@@ -2,6 +2,7 @@ package pl.jaworskimateuszm.myleagues.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.*;
+import pl.jaworskimateuszm.myleagues.model.Discipline;
 import pl.jaworskimateuszm.myleagues.model.League;
 import pl.jaworskimateuszm.myleagues.model.Rank;
 
@@ -67,5 +68,12 @@ public interface LeagueMapper {
             @Result(property = "leagueId", column = "id_ligi")
     })
     List<Rank> findRankBySurname(String surname);
+
+    @Select("SELECT id_dyscypliny, typ FROM dyscypliny")
+    @Results({
+            @Result(property = "disciplineId", column = "id_dyscypliny"),
+            @Result(property = "type", column = "typ")
+    })
+    List<Discipline> findAllDisciplines();
 
 }
