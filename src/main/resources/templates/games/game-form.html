@@ -89,7 +89,7 @@
 					<div th:if="${error == true}" class="help-block text-danger col-xs-offset-1 col-xs-10 mb-2">
 						Podane wartości są niepoprawne.
 					</div>
-					<a th:if="${readWrite}" th:href="@{/games/add-set(gameId=${game.gameId})}"
+					<a th:if="${readWrite}" sec:authorize="hasRole('ROLE_WORKER')" th:href="@{/games/add-set(gameId=${game.gameId})}"
 					   class="btn btn-outline-dark btn-sm  mt-2 mb-4 mr-5">
 						Dodaj Set
 					</a>
@@ -208,7 +208,7 @@
 					</div>
 
 					<br>
-					<button th:if="${readWrite}" type="submit" class="btn btn-outline-dark btn-md mt-2">Zapisz</button>
+					<button th:if="${readWrite}" sec:authorize="hasRole('ROLE_WORKER')" type="submit" class="btn btn-outline-dark btn-md mt-2">Zapisz</button>
 				</form>
 				<hr>
 				<a th:if="${readWrite}" class="btn btn-light btn-sm active" th:href="@{/games/list}">Powrót do listy meczy</a>

@@ -130,7 +130,7 @@
 						<th>Termin</th>
 						<th>Wynik pierwszego zawodnika</th>
 						<th>Wynik drugiego zawodnika</th>
-						<th sec:authorize="hasRole('ROLE_WORKER')">Akcja</th>
+						<th sec:authorize="hasAnyRole('ROLE_WORKER', 'ROLE_PLAYER')">Akcja</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -158,6 +158,13 @@
 								</a>
 							</div>
 						</td>
+						<td sec:authorize="hasRole('ROLE_PLAYER')" class="form-inline">
+							<div sec:authorize="hasAnyRole('ROLE_PLAYER', 'ROLE_WORKER')">
+								<a th:href="@{/games/update(gameId=${game.gameId})}"
+								   class="btn btn-outline-secondary btn-sm">
+									Szczegóły
+								</a>
+							</div>
 					</tr>
 					</tbody>
 				</table>
