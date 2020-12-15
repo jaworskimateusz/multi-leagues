@@ -18,7 +18,7 @@ public class Parser {
 
     public static Date stringToDate(String text) {
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd h:mm").parse(text);
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(text);
             return date;
         } catch (ParseException e) {
             e.printStackTrace();
