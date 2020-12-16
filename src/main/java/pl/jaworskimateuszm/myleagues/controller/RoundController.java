@@ -3,16 +3,11 @@ package pl.jaworskimateuszm.myleagues.controller;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.RoundMapper;
 import pl.jaworskimateuszm.myleagues.model.Round;
-import pl.jaworskimateuszm.myleagues.model.Season;
 import pl.jaworskimateuszm.myleagues.utils.Parser;
-
-import javax.validation.Valid;
-import java.util.Date;
 
 @Controller
 @RequestMapping("/rounds")

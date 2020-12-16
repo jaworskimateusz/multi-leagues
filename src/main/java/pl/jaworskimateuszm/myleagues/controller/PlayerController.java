@@ -1,6 +1,5 @@
 package pl.jaworskimateuszm.myleagues.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pl.jaworskimateuszm.myleagues.mapper.LeagueMapper;
 import pl.jaworskimateuszm.myleagues.mapper.UserMapper;
-import pl.jaworskimateuszm.myleagues.model.League;
 import pl.jaworskimateuszm.myleagues.model.NewUser;
 import pl.jaworskimateuszm.myleagues.model.PlayerDetail;
 import pl.jaworskimateuszm.myleagues.model.User;
@@ -26,14 +23,12 @@ import javax.validation.Valid;
 public class PlayerController {
 
 	private UserMapper userMapper;
-	private LeagueMapper leagueMapper;
 
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
-	public PlayerController(UserMapper userMapper, LeagueMapper leagueMapper) {
+	public PlayerController(UserMapper userMapper) {
 		this.userMapper = userMapper;
-		this.leagueMapper = leagueMapper;
 	}
 
 	@GetMapping("/list")
@@ -71,15 +66,6 @@ public class PlayerController {
 		model.addAttribute("whichOne", whichOne.equals("") ? null : whichOne);
 		return "/players/list-players";
 	}
-
-//	@GetMapping("/choose-player")
-//	public String choosePlayer(@RequestParam("gameId") int gameId, @RequestParam("whichOne") String whichOne, Model model) {
-//		List<User> players = userMapper.findAllByRole("PLAYER");
-//		model.addAttribute("gameId", gameId);
-//		model.addAttribute("players", players);
-//		model.addAttribute("whichOne", whichOne);
-//		return "/players/list-players";
-//	}
 
 	@GetMapping("/user-data")
 	public String updateUserData(HttpServletRequest request, Model model) {

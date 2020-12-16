@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.jaworskimateuszm.myleagues.mapper.*;
 import pl.jaworskimateuszm.myleagues.model.*;
 import pl.jaworskimateuszm.myleagues.utils.Parser;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.stream.Collectors;
 

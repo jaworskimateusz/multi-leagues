@@ -92,14 +92,6 @@ public interface UserMapper {
     @Delete("DELETE FROM authorities WHERE username = #{username}")
     int deleteByUsernameFromAuthorities(String username);
 
-//    @Update("UPDATE zawodnicy_ligi SET user_id=#{userId}, id_ligi=#{leagueId} " +
-//            "WHERE user_id=#{userId} AND id_ligi=#{leagueId}")
-//    int updatePlayerLeague(long userId, long leagueId);
-
-//    @Insert("INSERT INTO zawodnicy_ligi (user_id, id_ligi) " +
-//            " VALUES (#{userId}, #{leagueId})")
-//    int insertPlayerLeague(long userId, long leagueId);
-
     @Select("SELECT user_id, username, password, enabled, role, imie, nazwisko, pesel, numer_telefonu" +
             " FROM users" +
             " WHERE pesel = #{pesel}")

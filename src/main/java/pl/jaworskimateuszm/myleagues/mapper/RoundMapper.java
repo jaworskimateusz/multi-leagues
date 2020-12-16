@@ -2,9 +2,6 @@ package pl.jaworskimateuszm.myleagues.mapper;
 
 import org.apache.ibatis.annotations.*;
 import pl.jaworskimateuszm.myleagues.model.Round;
-import pl.jaworskimateuszm.myleagues.model.Season;
-
-import java.util.Date;
 import java.util.List;
 
 @Mapper
