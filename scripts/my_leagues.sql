@@ -211,6 +211,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `moje_ligi`.`zawodnicy_ligi` (
   `user_id` INT NOT NULL,
   `id_ligi` INT NOT NULL,
+  `punkty` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_id`, `id_ligi`),
   INDEX `fk_zawodnicy_has_ligi_ligi1_idx` (`id_ligi` ASC) VISIBLE,
   INDEX `fk_zawodnicy_has_ligi_zawodnicy1_idx` (`user_id` ASC) VISIBLE,

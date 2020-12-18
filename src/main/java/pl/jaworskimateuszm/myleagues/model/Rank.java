@@ -2,22 +2,12 @@ package pl.jaworskimateuszm.myleagues.model;
 
 public class Rank {
 
-    private long rankId;
     private String name;
     private String surname;
     private int points;
-    private String discipline;
     private long leagueId;
 
     public Rank() {
-    }
-
-    public long getRankId() {
-        return rankId;
-    }
-
-    public void setRankId(long rankId) {
-        this.rankId = rankId;
     }
 
     public String getName() {
@@ -42,14 +32,6 @@ public class Rank {
 
     public void setPoints(int points) {
         this.points = points;
-    }
-
-    public String getDiscipline() {
-        return discipline;
-    }
-
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
     }
 
     public long getLeagueId() {

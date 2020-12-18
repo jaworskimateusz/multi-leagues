@@ -27,24 +27,32 @@ public interface LeagueMapper {
     })
     List<League> findAll();
 
-    @Select("SELECT id_rankingu, imie, nazwisko, punkty, dyscyplina FROM rankingi WHERE id_ligi=#{leagueId}")
+    @Select("SELECT users.imie AS imie, users.nazwisko AS nazwisko, " +
+            "zawodnicy_ligi.punkty AS punkty " +
+            "FROM users " +
+            "JOIN zawodnicy_ligi USING (user_id) " +
+            "JOIN ligi USING (id_ligi) " +
+            "WHERE id_ligi=#{leagueId} " +
+            "ORDER BY zawodnicy_ligi.punkty DESC")
     @Results({
-            @Result(property = "rankId", column = "id_rankingu"),
             @Result(property = "name", column = "imie"),
             @Result(property = "surname", column = "nazwisko"),
             @Result(property = "points", column = "punkty"),
-            @Result(property = "discipline", column = "dyscyplina"),
             @Result(property = "leagueId", column = "id_ligi")
     })
     List<Rank> findLeagueRank(long leagueId);
 
-    @Select("SELECT id_rankingu, imie, nazwisko, punkty, dyscyplina from rankingi WHERE nazwisko=#{surname}")
+    @Select("SELECT users.imie AS imie, users.nazwisko AS nazwisko, " +
+            "zawodnicy_ligi.punkty AS punkty " +
+            "FROM users " +
+            "JOIN zawodnicy_ligi USING (user_id) " +
+            "JOIN ligi USING (id_ligi) " +
+            "WHERE nazwisko=#{surname} " +
+            "ORDER BY zawodnicy_ligi.punkty DESC")
     @Results({
-            @Result(property = "rankId", column = "id_rankingu"),
             @Result(property = "name", column = "imie"),
             @Result(property = "surname", column = "nazwisko"),
             @Result(property = "points", column = "punkty"),
-            @Result(property = "discipline", column = "dyscyplina"),
             @Result(property = "leagueId", column = "id_ligi")
     })
     List<Rank> findRankBySurname(String surname);
